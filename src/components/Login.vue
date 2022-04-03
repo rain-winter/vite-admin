@@ -10,9 +10,9 @@ export default {
     //   console.log(res)
     // })
 
-    this.$request.get('/article', { name: 'jack' }, { mock: true }).then(res => {
-      console.log(res)
-    })
+    // this.$request.get('/article', { name: 'jack' }, { mock: true }).then(res => {
+    //   console.log(res)
+    // })
   },
 }
 </script>
