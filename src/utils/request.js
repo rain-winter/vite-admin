@@ -30,7 +30,7 @@ service.interceptors.response.use((res) => {
     return data
   } else if (code === 40001) {
     ElMessage.error(TOKEN_INVALID)
-    setTimeout(() => {}, 1500)
+    setTimeout(() => { }, 1500)
     return Promise.reject(TOKEN_INVALID)
   } else {
     ElMessage.error(msg || NETWORK_ERROR)
@@ -43,10 +43,13 @@ service.interceptors.response.use((res) => {
  * @param {*} options  请求配置
  * @returns
  */
-function request(options) {
+function request (options) {
   options.method = options.method || 'get'
   if (options.method.toLowerCase() === 'get') {
     options.params = options.data
+  }
+  if (typeof options.mock != 'undefined') {
+    config.mock = options.mock
   }
   if (config.env === 'prod') {
     service.defaults.baseURL = config.baseApi

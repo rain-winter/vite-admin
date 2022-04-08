@@ -18,6 +18,11 @@
 </template>
 <script setup>
 import { reactive, ref } from 'vue'
+import { useStore } from 'vuex'
+import api from '../api/index'
+import { useRouter } from 'vue-router'
+const router = useRouter()
+const store = useStore()
 // 当前表单绑定的数据
 const user = reactive({
   userName: '',
@@ -32,7 +37,7 @@ const userForm = ref() // form实例
  */
 const checkUserName = (rule, value, callback) => {
   if (!value) {
-    return callback(new Error('请输入用户名'))
+    callback(new Error('请输入用户名'))
   }
   callback()
 }
@@ -44,7 +49,7 @@ const checkUserName = (rule, value, callback) => {
  */
 const checkUserPwd = (rule, value, callback) => {
   if (!value) {
-    return callback(new Error('请输入密码'))
+    callback(new Error('请输入密码'))
   }
   callback()
 }
@@ -58,7 +63,13 @@ const handleLogin = (userForm) => {
   if (!userForm) return
   userForm.validate((valid) => {
     if (valid) {
-      console.log(valid)
+      api.login(user).then(res => {
+        console.log(res)
+        store.commit('saveUserInfo', res)
+        router.push({
+          name: 'WelCome',
+        })
+      })
     } else {
       console.log('error submit!')
       return false
