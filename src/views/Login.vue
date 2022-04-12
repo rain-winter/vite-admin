@@ -70,6 +70,7 @@ const handleLogin = (userForm) => {
           name: 'WelCome',
         })
       })
+	  return true
     } else {
       console.log('error submit!')
       return false
