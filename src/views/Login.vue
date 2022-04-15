@@ -65,12 +65,12 @@ const handleLogin = (userForm) => {
     if (valid) {
       api.login(user).then(res => {
         console.log(res)
-        store.commit('saveUserInfo', res)
+        store.commit('saveUserInfo', res) // 触发store里的方法，设置本地缓存
         router.push({
           name: 'WelCome',
         })
       })
-	  return true
+      return true
     } else {
       console.log('error submit!')
       return false
@@ -86,17 +86,20 @@ const handleLogin = (userForm) => {
   justify-content: center;
   align-items: center;
   background-color: #f9fcff;
+
   .modal {
     width: 500px;
     padding: 20px;
     background-color: #ffffff;
     box-shadow: 0px 0px 10px 3px #c7c9cbdd;
+
     .title {
       font-size: 30px;
       line-height: 1.5;
       text-align: center;
       margin-bottom: 20px;
     }
+
     .btn-login {
       width: 100%;
     }

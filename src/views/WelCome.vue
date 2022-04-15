@@ -22,8 +22,8 @@ export default {
 	align-items: center;
 	.content {
 		// 相对与自己定位
-		position: relative;
-		bottom: 40px;
+		// position: relative;
+		// bottom: 40px;
 		.sub-title {
 			font-size: 30px;
 			line-height: 42px;
