@@ -11,11 +11,11 @@ import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 
 // import request from './utils/request' // 引入request
-// import api from './api'
+import api from './api'
 
 const app = createApp(App)
 
 // app.config.globalProperties.$request = request // 全局挂在request函数
-// app.config.globalProperties.$api = api // 全局挂在request函数
+app.config.globalProperties.$api = api // 全局挂在request函数
 
 app.use(router).use(ElementPlus).use(store).mount('#app')

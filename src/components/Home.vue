@@ -9,30 +9,18 @@
 
       <!-- 导航按钮 -->
       <div>
-        <el-menu default-active="1" class="el-menu-vertical-demo" :collapse="isCollapse">
-          <el-sub-menu index="1">
-            <template #title>
-              <el-icon>
-                <icon-menu />
-              </el-icon>
-              <span>系统管理</span>
-            </template>
-            <el-menu-item index="1-1">item one</el-menu-item>
-          </el-sub-menu>
-          <el-sub-menu index="2">
-            <template #title>
-              <el-icon>
-                <icon-menu />
-              </el-icon>
-              <span>审批管理</span>
-            </template>
-            <el-menu-item index="1-2">休假申请</el-menu-item>
-            <el-menu-item index="1-2">带我审批</el-menu-item>
-          </el-sub-menu>
+        <el-menu
+          default-active="1"
+          class="el-menu-vertical-demo"
+          :collapse="isCollapse"
+        >
+          <TreeMenu :menuList="menuList" />
         </el-menu>
       </div>
     </div>
-    <div :class="['content-right', isCollapse ? 'fold-content' : 'unfold-content']">
+    <div
+      :class="['content-right', isCollapse ? 'fold-content' : 'unfold-content']"
+    >
       <div class="nav-top">
         <div class="nav-left">
           <el-icon style="cursor: pointer" @click="expandOrCollapse">
@@ -42,7 +30,7 @@
         </div>
 
         <div class="user-info">
-          <el-badge :is-dot="true" class="notice">
+          <el-badge :is-dot="noticeCount" class="notice">
             <el-icon>
               <Bell />
             </el-icon>
@@ -51,7 +39,9 @@
             <span>{{ userInfo.userName }}</span>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item>邮箱:{{ userInfo.userEmail }}</el-dropdown-item>
+                <el-dropdown-item
+                  >邮箱:{{ userInfo.userEmail }}</el-dropdown-item
+                >
                 <el-dropdown-item command="logout">推出</el-dropdown-item>
               </el-dropdown-menu>
             </template>
@@ -67,37 +57,54 @@
   </div>
 </template>
 <script setup>
-import {
-  Document,
-  Menu as IconMenu,
-  Location,
-  Setting,
-  Fold,
-  Bell,
-} from '@element-plus/icons-vue'
+import { Fold, Bell } from '@element-plus/icons-vue'
 import { reactive, ref } from 'vue'
 import { useStore } from 'vuex'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
+
+import api from '../api/index'
+import TreeMenu from './TreeMenu.vue'
 
 const router = useRouter()
 const store = useStore()
-let isCollapse = ref(true)
 
+let isCollapse = ref(false)
 let userInfo = reactive({})
+let noticeCount = ref(0)
+let menuList = reactive([])
+
 userInfo = store.state.userInfo || '请登录'
+noticeCount = store.state.noticeCount
 
 // 退出系统
 const handleLogout = (key) => {
   if (key === 'logout') {
     store.commit('saveUserInfo', '')
-    router.push({ path: '/login', })
+    router.push({ path: '/login' })
   }
 }
+// 获取 通知
+const getNoticeCount = () => {
+  const count = api.noticeCount().then((res) => {
+    // console.log(res)
+  })
+  // noticeCount = count
+}
+getNoticeCount()
 
+// 获取menu列表
+const getMenuList = async () => {
+  await api.getMenuList().then((res) => {
+    menuList.push(res)
+  })
+}
+getMenuList()
+
+console.log('menuList', menuList)
+
+// 展开和收缩
 const expandOrCollapse = () => {
-
   isCollapse.value = !isCollapse.value
-
 }
 </script>
 <style lang="scss">
@@ -130,7 +137,7 @@ const expandOrCollapse = () => {
       display: flex;
       align-items: center;
       font-size: 18px;
-
+      color: #333;
       img {
         margin: 0 16px;
         width: 32px;
@@ -145,13 +152,11 @@ const expandOrCollapse = () => {
 
   .unfold-content {
     margin-left: 200px !important;
-
   }
 
   .content-right {
     margin-left: 200px;
-
-
+    transition: 0.5s;
     .nav-top {
       height: 50px;
       display: flex;
