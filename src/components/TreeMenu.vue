@@ -1,43 +1,47 @@
 <template>
-  <template v-for="item in menuList" :key="item._id">
-    <el-submenu
-      :index="item.path"
+  <h2>tree - menu</h2>
+  <template v-for="menu in userMenu">
+    <el-sub-menu
       v-if="
-        item.children &&
-        item.children.length > 0 &&
-        item.children[0].menuType == 1
+        menu.children &&
+        menu.children.length > 0 &&
+        menu.children[0].menuType == 1
       "
+      :index="menu.path"
+      :key="menu._id"
     >
       <template #title>
-        <i :class="item.icon"></i>
-        <span>{{ item.menuName }}</span>
+        <i :class="menu.icon"></i>
+        <span>{{ menu.menuName }}</span>
       </template>
+
       <!-- 递归组件，再次循环判断子菜单 -->
-      <MenuTree :menuList="item.children" />
-    </el-submenu>
-    <el-menu-item v-else :index="item.path">
-      <i :class="item.icon"></i>
-      <template #title>{{ item.menuName }}</template>
+      <TreeMenu :userMenu="menu.children" />
+    </el-sub-menu>
+    <el-menu-item
+      v-else-if="menu.menuType == 1"
+      :index="menu.path"
+      :key="menu.menuName"
+    >
+      <span>{{ menu.menuName }}</span>
     </el-menu-item>
   </template>
 </template>
+{{ userMenu }}
 <script>
 export default {
-  name: 'MenuTree',
-  props: {
-    menuList: {
-      type: Array,
-      default: function () {
-        return []
-      },
-    },
-  },
+  name: 'TreeMenu',
+  props: ['userMenu'],
   mounted() {
-    this.printData()
+    this.conso()
   },
   methods: {
-    printData() {
-      console.log(this.menuList)
+    conso() {
+      console.log('tree')
+      console.log('this.userMenu', this.userMenu)
+      this.userMenu.map((item) => {
+        console.log(item)
+      })
     },
   },
 }

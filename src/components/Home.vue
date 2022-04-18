@@ -14,7 +14,7 @@
           class="el-menu-vertical-demo"
           :collapse="isCollapse"
         >
-          <TreeMenu :menuList="menuList" />
+          <TreeMenu :userMenu="userMenu" />
         </el-menu>
       </div>
     </div>
@@ -57,13 +57,14 @@
   </div>
 </template>
 <script setup>
+import TreeMenu from './TreeMenu.vue'
+
 import { Fold, Bell } from '@element-plus/icons-vue'
 import { reactive, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 
 import api from '../api/index'
-import TreeMenu from './TreeMenu.vue'
 
 const router = useRouter()
 const store = useStore()
@@ -71,7 +72,7 @@ const store = useStore()
 let isCollapse = ref(false)
 let userInfo = reactive({})
 let noticeCount = ref(0)
-let menuList = reactive([])
+let userMenu = reactive([])
 
 userInfo = store.state.userInfo || '请登录'
 noticeCount = store.state.noticeCount
@@ -84,23 +85,19 @@ const handleLogout = (key) => {
   }
 }
 // 获取 通知
-const getNoticeCount = () => {
-  const count = api.noticeCount().then((res) => {
-    // console.log(res)
-  })
-  // noticeCount = count
+const getNoticeCount = async () => {
+  const count = await api.noticeCount()
+  noticeCount = count
+  console.log('noticeCount', noticeCount)
 }
 getNoticeCount()
 
 // 获取menu列表
 const getMenuList = async () => {
-  await api.getMenuList().then((res) => {
-    menuList.push(res)
-  })
+  const list = await api.getMenuList()
+  userMenu.push(list)
 }
 getMenuList()
-
-console.log('menuList', menuList)
 
 // 展开和收缩
 const expandOrCollapse = () => {

@@ -11,10 +11,12 @@ export default {
       data: params
     })
   },
+  // 首页消息
   noticeCount () {
     return request({
       method: 'get',
       url: '/leave/count',
+      data: {}
     })
   },
   getMenuList () {
