@@ -14,7 +14,7 @@ const routes = [
         name: 'WelCome',
         path: '/welcome',
         meta: {
-          title: '欢迎来到四月 - Welcome to April',
+          title: 'Welcome to April',
         },
         component: WelCome,
       },

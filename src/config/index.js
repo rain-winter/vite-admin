@@ -21,7 +21,7 @@ const envConfig = {
 }
 export default {
 	env: env,
-	mock: true,
+	mock: false,
 	stroageSpace: 'manager',
 	...envConfig[env], // 根据不同的环境变量解构出对应的地址参数
 }

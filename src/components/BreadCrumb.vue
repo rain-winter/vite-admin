@@ -18,7 +18,7 @@ export default {
     },
   },
   mounted() {
-    console.log(this.$route)
+    // console.log(this.$route)
   },
 }
 // import { useRoute, useRouter } from 'vue-router'
