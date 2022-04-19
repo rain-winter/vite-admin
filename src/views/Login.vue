@@ -2,7 +2,7 @@
   <div class="login-wrapper">
     <div class="modal">
       <el-form ref="userForm" :model="user" status-icon :rules="rules">
-        <p class="title">火星</p>
+        <p class="title">四月后台管理</p>
         <el-form-item prop="userName">
           <el-input type="text" v-model="user.userName" placeholder="请输入用户名" />
         </el-form-item>

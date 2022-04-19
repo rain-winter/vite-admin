@@ -88,21 +88,24 @@ const handleLogout = (key) => {
 const getNoticeCount = async () => {
   const count = await api.noticeCount()
   noticeCount = count
-  console.log('noticeCount', noticeCount)
 }
-getNoticeCount()
 
 // 获取menu列表
 const getMenuList = async () => {
-  const list = await api.getMenuList()
-  userMenu.push(list)
+  api.getMenuList().then((res) => {
+    console.log(res)
+    userMenu.push(...res)
+  })
+  console.log(userMenu)
 }
-getMenuList()
 
 // 展开和收缩
 const expandOrCollapse = () => {
   isCollapse.value = !isCollapse.value
 }
+
+getNoticeCount()
+getMenuList()
 </script>
 <style lang="scss">
 .el-menu-vertical-demo:not(.el-menu--collapse) {
@@ -125,7 +128,7 @@ const expandOrCollapse = () => {
     position: absolute;
     height: 100vh;
     // background-color: #001529;
-    color: #fff;
+    // color: #fff;
     overflow-y: auto;
     transition: 0.5s;
 

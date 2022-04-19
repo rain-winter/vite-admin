@@ -1,5 +1,4 @@
 <template>
-  <h2>tree - menu</h2>
   <template v-for="menu in userMenu">
     <el-sub-menu
       v-if="
@@ -11,7 +10,7 @@
       :key="menu._id"
     >
       <template #title>
-        <i :class="menu.icon"></i>
+        <el-icon><setting /></el-icon>
         <span>{{ menu.menuName }}</span>
       </template>
 
@@ -23,26 +22,20 @@
       :index="menu.path"
       :key="menu.menuName"
     >
-      <span>{{ menu.menuName }}</span>
+      <i :class="menu.icon"></i>
+      <template #title>
+        <span>{{ menu.menuName }}</span>
+      </template>
     </el-menu-item>
   </template>
 </template>
-{{ userMenu }}
 <script>
+import { Setting } from '@element-plus/icons-vue'
 export default {
   name: 'TreeMenu',
   props: ['userMenu'],
-  mounted() {
-    this.conso()
-  },
-  methods: {
-    conso() {
-      console.log('tree')
-      console.log('this.userMenu', this.userMenu)
-      this.userMenu.map((item) => {
-        console.log(item)
-      })
-    },
+  components: {
+    Setting,
   },
 }
 </script>
