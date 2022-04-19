@@ -26,7 +26,9 @@
           <el-icon style="cursor: pointer" @click="expandOrCollapse">
             <fold />
           </el-icon>
-          <div class="bread">面包屑</div>
+          <div class="bread">
+            <BreadCrumb />
+          </div>
         </div>
 
         <div class="user-info">
@@ -57,14 +59,14 @@
   </div>
 </template>
 <script setup>
-import TreeMenu from './TreeMenu.vue'
-
 import { Fold, Bell } from '@element-plus/icons-vue'
 import { reactive, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 
 import api from '../api/index'
+import TreeMenu from './TreeMenu.vue'
+import BreadCrumb from './BreadCrumb.vue'
 
 const router = useRouter()
 const store = useStore()
@@ -93,10 +95,8 @@ const getNoticeCount = async () => {
 // 获取menu列表
 const getMenuList = async () => {
   api.getMenuList().then((res) => {
-    console.log(res)
     userMenu.push(...res)
   })
-  console.log(userMenu)
 }
 
 // 展开和收缩
