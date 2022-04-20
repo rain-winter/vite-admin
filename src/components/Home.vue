@@ -13,6 +13,9 @@
           default-active="1"
           class="el-menu-vertical-demo"
           :collapse="isCollapse"
+          background-color="#2c3e50"
+          text-color="#ffffff"
+          router
         >
           <TreeMenu :userMenu="userMenu" />
         </el-menu>
@@ -51,9 +54,9 @@
         </div>
       </div>
       <div class="wrapper">
-        <div class="main-page">
+        <!-- <div class="main-page"> -->
           <router-view />
-        </div>
+        <!-- </div> -->
       </div>
     </div>
   </div>
@@ -115,7 +118,6 @@ getMenuList()
 
 .basic-layout {
   position: relative;
-
   .fold-menu {
     width: 64px !important;
   }
@@ -127,8 +129,7 @@ getMenuList()
   .nav-side {
     position: absolute;
     height: 100vh;
-    // background-color: #001529;
-    // color: #fff;
+    background-color: #2c3e50;
     overflow-y: auto;
     transition: 0.5s;
 
@@ -137,7 +138,7 @@ getMenuList()
       display: flex;
       align-items: center;
       font-size: 18px;
-      color: #333;
+      color: #fff;
       img {
         margin: 0 16px;
         width: 32px;

@@ -20,6 +20,7 @@ export default {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	background-color: #fff;
 	.content {
 		// 相对与自己定位
 		// position: relative;

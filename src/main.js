@@ -18,4 +18,4 @@ const app = createApp(App)
 // app.config.globalProperties.$request = request // 全局挂在request函数
 app.config.globalProperties.$api = api // 全局挂在request函数
 
-app.use(router).use(ElementPlus).use(store).mount('#app')
+app.use(router).use(ElementPlus, { size: 'small' }).use(store).mount('#app')

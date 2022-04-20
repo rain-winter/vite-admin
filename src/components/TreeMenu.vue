@@ -37,5 +37,8 @@ export default {
   components: {
     Setting,
   },
+  mounted() {
+    console.log(this.userMenu)
+  },
 }
 </script>
