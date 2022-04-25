@@ -26,5 +26,13 @@ export default {
       url: '/menu/list',
       mock: true
     })
+  },
+  getUserList (params) {
+    return request({
+      method: 'get',
+      url: '/users/list',
+      data: params,
+      mock: true
+    })
   }
 }

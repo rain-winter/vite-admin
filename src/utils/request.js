@@ -23,7 +23,7 @@ service.interceptors.request.use((req) => {
 	const headers = req.headers
 	// TODO 获取token
 	const { token } = storage.getItem('userInfo')
-	console.log('token', token)
+	// console.log('token', token)
 
 	if (!headers.Authorization) headers.Authorization = 'Bearer ' + token
 	return req

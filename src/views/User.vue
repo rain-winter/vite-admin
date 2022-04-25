@@ -1,15 +1,15 @@
 <template>
   <div class="user-manag">
     <div class="query-form">
-      <el-form :inline="true" :model="user">
-        <el-form-item>
+      <el-form :inline="true" :model="user" ref="formRef">
+        <el-form-item label="用户ID" prop="userId">
           <el-input v-model="user.userId" placeholder="请输入用户ID" />
         </el-form-item>
-        <el-form-item>
+        <el-form-item label="用户名" prop="userName">
           <el-input v-model="user.userName" placeholder="请输入用户名称" />
         </el-form-item>
-        <el-form-item>
-          <el-select v-model="user.state">
+        <el-form-item label="状态" prop="user.state">
+          <el-select v-model="user.state" placeholder="请选择">
             <el-option :value="0" lablel="所有"></el-option>
             <el-option :value="1" lablel="在职"></el-option>
             <el-option :value="2" lablel="离职"></el-option>
@@ -17,8 +17,8 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary">查询</el-button>
-          <el-button>重置</el-button>
+          <el-button type="primary" @click="handleQuery">查询</el-button>
+          <el-button @click="handleReset(formRef)">重置</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -38,29 +38,41 @@
         />
         <el-table-column fixed="right" label="Operations" width="120">
           <template #default>
-            <el-button type="text" size="small" @click="handleClick"
-              >编辑</el-button
-            >
+            <el-button type="text" size="small">编辑</el-button>
             <el-button type="text" size="small">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
+      <!-- 分页 -->
+      <el-pagination
+        class="pagination"
+        @current-change="handleCurrentChange"
+        background
+        layout="prev, pager, next"
+        :total="pager.total"
+        :page-size="pager.pageSize"
+      />
     </div>
   </div>
 </template>
 
 <script>
-import { onMounted, reactive, ref } from 'vue'
+import { getCurrentInstance, onMounted, reactive, ref } from 'vue'
 export default {
   name: 'user',
   setup() {
-    const user = reactive({})
+    const { $api } = getCurrentInstance().appContext.config.globalProperties
+    const user = reactive({
+      state: 1,
+    })
     const age = ref(3)
-    const userList = reactive([
-      {
-        userId: 12,
-      },
-    ])
+    let userList = ref([])
+    const pager = reactive({
+      pageNum: 1,
+      pageSize: 10,
+    })
+    const formRef = ref()
+
     const columns = reactive([
       {
         label: '用户ID',
@@ -91,23 +103,53 @@ export default {
         prop: 'lastLoginTime',
       },
     ])
+    const getUserList = async () => {
+      let params = { ...user, ...pager }
+      try {
+        const { list, page } = await $api.getUserList(params)
+        userList.value = list
+        pager.total = page.total
+      } catch (err) {
+        console.log(err)
+      }
+    }
 
     onMounted(() => {
-      console.log('init')
+      getUserList()
     })
+
+    //
+    const handleQuery = () => {
+      getUserList()
+    }
+    const handleReset = (e) => {
+      e.resetFields()
+    }
+
+    // 分页时间
+    const handleCurrentChange = (currentPage) => {
+      pager.pageNum = currentPage
+      getUserList()
+    }
 
     return {
       user,
       age,
       columns,
       userList,
+      pager,
+      formRef,
+      getUserList,
+      handleQuery,
+      handleReset,
+      handleCurrentChange,
     }
   },
 }
 </script>
 
 <style lang="scss" scoped>
-.action{
+.action {
   padding: 20px;
 }
 </style>

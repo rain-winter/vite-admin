@@ -38,7 +38,7 @@ export default {
     Setting,
   },
   mounted() {
-    console.log(this.userMenu)
+    // console.log(this.userMenu)
   },
 }
 </script>
