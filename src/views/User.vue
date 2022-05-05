@@ -1,6 +1,7 @@
 <template>
   <div class="user-manag">
     <div class="query-form">
+      <!-- prop 是数据库的字段 -->
       <el-form :inline="true" :model="user" ref="formRef">
         <el-form-item label="用户ID" prop="userId">
           <el-input v-model="user.userId" placeholder="请输入用户ID" />
@@ -8,7 +9,7 @@
         <el-form-item label="用户名" prop="userName">
           <el-input v-model="user.userName" placeholder="请输入用户名称" />
         </el-form-item>
-        <el-form-item label="状态" prop="user.state">
+        <el-form-item label="状态" prop="state">
           <el-select v-model="user.state" placeholder="请选择">
             <el-option :value="0" lablel="所有"></el-option>
             <el-option :value="1" lablel="在职"></el-option>
@@ -38,7 +39,7 @@
         />
         <el-table-column fixed="right" label="Operations" width="120">
           <template #default>
-            <el-button type="text" size="small">编辑</el-button>
+            <el-button @click="handleEdit()" type="text" size="small">编辑</el-button>
             <el-button type="text" size="small">删除</el-button>
           </template>
         </el-table-column>
@@ -57,81 +58,81 @@
 </template>
 
 <script>
-import { getCurrentInstance, onMounted, reactive, ref } from 'vue'
+import { getCurrentInstance, onMounted, reactive, ref } from "vue";
 export default {
-  name: 'user',
+  name: "user",
   setup() {
-    const { $api } = getCurrentInstance().appContext.config.globalProperties
+    const { $api } = getCurrentInstance().appContext.config.globalProperties;
     const user = reactive({
       state: 1,
-    })
-    const age = ref(3)
-    let userList = ref([])
+    });
+    const age = ref(3);
+    let userList = ref([]);
     const pager = reactive({
       pageNum: 1,
       pageSize: 10,
-    })
-    const formRef = ref()
+    });
+    const formRef = ref();
 
     const columns = reactive([
       {
-        label: '用户ID',
-        prop: 'userId',
+        label: "用户ID",
+        prop: "userId",
       },
       {
-        label: '用户名称',
-        prop: 'userName',
+        label: "用户名称",
+        prop: "userName",
       },
       {
-        label: '用户邮箱',
-        prop: 'userEmail',
+        label: "用户邮箱",
+        prop: "userEmail",
       },
       {
-        label: '用户角色',
-        prop: 'role',
+        label: "用户角色",
+        prop: "role",
       },
       {
-        label: '用户状态',
-        prop: 'state',
+        label: "用户状态",
+        prop: "state",
       },
       {
-        label: '注册时间',
-        prop: 'createTime',
+        label: "注册时间",
+        prop: "createTime",
       },
       {
-        label: '最后登录时间',
-        prop: 'lastLoginTime',
+        label: "最后登录时间",
+        prop: "lastLoginTime",
       },
-    ])
+    ]);
     const getUserList = async () => {
-      let params = { ...user, ...pager }
+      let params = { ...user, ...pager };
       try {
-        const { list, page } = await $api.getUserList(params)
-        userList.value = list
-        pager.total = page.total
+        const { list, page } = await $api.getUserList(params);
+        userList.value = list;
+        pager.total = page.total;
       } catch (err) {
-        console.log(err)
+        console.log(err);
       }
-    }
+    };
 
     onMounted(() => {
-      getUserList()
-    })
+      getUserList();
+    });
 
-    //
+    // 查询
     const handleQuery = () => {
-      getUserList()
-    }
+      getUserList();
+    };
     const handleReset = (e) => {
-      e.resetFields()
-    }
+      e.resetFields();
+    };
 
     // 分页时间
     const handleCurrentChange = (currentPage) => {
-      pager.pageNum = currentPage
-      getUserList()
-    }
-
+      pager.pageNum = currentPage;
+      getUserList();
+    };
+    // TODO 7.4
     return {
       user,
       age,
@@ -143,9 +144,9 @@ export default {
       handleQuery,
       handleReset,
       handleCurrentChange,
-    }
+    };
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>

@@ -15,20 +15,19 @@ const NETWORK_ERROR = '网络请求异常'
 // 创建axios对象，添加全局配置
 const service = axios.create({
 	baseURL: config.baseApi,
-	timeout: 8000,
+	timeout: 10000,
 })
 
 // 请求拦截
 service.interceptors.request.use((req) => {
 	const headers = req.headers
 	// TODO 获取token
-	const { token } = storage.getItem('userInfo')
+	const { token } = storage.getItem('userInfo') || ''
 	// console.log('token', token)
 
 	if (!headers.Authorization) headers.Authorization = 'Bearer ' + token
 	return req
 })
-
 // 相应拦截
 service.interceptors.response.use((res) => {
 	const {

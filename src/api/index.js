@@ -4,35 +4,34 @@
 import request from '../utils/request'
 
 export default {
-  login (params) {
-    return request({
-      method: 'post',
-      url: '/users/login',
-      data: params
-    })
-  },
-  // 首页消息
-  noticeCount () {
-    return request({
-      method: 'get',
-      url: '/leave/count',
-      data: {},
-      mock: true
-    })
-  },
-  getMenuList () {
-    return request({
-      method: 'get',
-      url: '/menu/list',
-      mock: true
-    })
-  },
-  getUserList (params) {
-    return request({
-      method: 'get',
-      url: '/users/list',
-      data: params,
-      mock: true
-    })
-  }
+	login(params) {
+		return request({
+			method: 'post',
+			url: '/users/login',
+			data: params
+		})
+	},
+	// 首页消息
+	noticeCount() {
+		return request({
+			method: 'get',
+			url: '/leave/count',
+			data: {},
+			mock: true
+		})
+	},
+	getMenuList() {
+		return request({
+			method: 'get',
+			url: '/menu/list',
+			mock: true
+		})
+	},
+	getUserList(params) {
+		return request({
+			method: 'get',
+			url: '/users/list',
+			data: params,
+		})
+	}
 }

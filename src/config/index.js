@@ -6,6 +6,7 @@ const env =
 const envConfig = {
 	dev: {
 		baseApi: '/api',
+		// mockApi: 'https://www.fastmock.site/mock/756303ac8aae70f35d0436f5f51b7ac6/api'
 		// mockApi: 'https://www.fastmock.site/mock/40686df6be86cb9ab3c58f6782762add/api', // 自己得mock地址
 		mockApi: 'https://www.fastmock.site/mock/c1c302e8baed9894c48c17e4738c092e/api' // 老师得mick地址
 
