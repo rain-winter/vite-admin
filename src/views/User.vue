@@ -26,21 +26,26 @@
     <div class="base-table">
       <div class="action">
         <el-button type="primary">新增</el-button>
-        <el-button type="danger">批量删除</el-button>
+        <el-button @click="handlePatchDel" type="danger">批量删除</el-button>
       </div>
-      <el-table :data="userList">
+      <el-table :data="userList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" />
         <el-table-column
           v-for="(item, index) in columns"
           :key="item.prop"
           :prop="item.prop"
           :label="item.label"
+          :formatter="item.formatter"
           width="180"
         />
         <el-table-column fixed="right" label="Operations" width="120">
-          <template #default>
-            <el-button @click="handleEdit()" type="text" size="small">编辑</el-button>
-            <el-button type="text" size="small">删除</el-button>
+          <template #default="scope">
+            <el-button @click="handleEdit(scppe.row)" type="text" size="small"
+              >编辑</el-button
+            >
+            <el-button @click="handleDelete(scope.row)" type="text" size="small"
+              >删除</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -73,6 +78,7 @@ export default {
       pageSize: 10,
     });
     const formRef = ref();
+    let checkUserIds = ref([]); // 选中用户列表的对象
 
     const columns = reactive([
       {
@@ -90,10 +96,23 @@ export default {
       {
         label: "用户角色",
         prop: "role",
+        formatter(row, column, val) {
+          return {
+            0: "管理员",
+            1: "普通用户",
+          }[val];
+        },
       },
       {
         label: "用户状态",
         prop: "state",
+        formatter(row, column, val) {
+          return {
+            1: "在职",
+            2: "离职",
+            3: "试用期",
+          }[val];
+        },
       },
       {
         label: "注册时间",
@@ -127,12 +146,47 @@ export default {
       e.resetFields();
     };
 
+    // 用户单个删除
+    const handleDelete = async (row) => {
+      console.log(row.userId);
+      const res = await $api.userDel({ userIds: [row.userId] });
+      console.log(res);
+    };
+
+    const handlePatchDel = async () => {
+      if (checkUserIds.value.length == 0) {
+        alert("请选择要删除的用户");
+      }
+      let res = await $api.userDel({
+        userIds: checkUserIds.value,
+      });
+      if (res.nModified > 0) {
+        alert("删除成功");
+        getUserList();
+      } else {
+        alert("删除失败");
+      }
+      console.log(res);
+    };
+
+    const handleSelectionChange = (list) => {
+      // 选择的数据集
+      let arr = [];
+      list.map((item) => {
+        arr.push(item.userId);
+      });
+      checkUserIds.value = arr;
+    };
+
+    const formatter = (row, column) => {
+      console.log(row);
+    };
+
     // 分页时间
     const handleCurrentChange = (currentPage) => {
       pager.pageNum = currentPage;
       getUserList();
     };
-    // TODO 7.4
     return {
       user,
       age,
@@ -144,6 +198,10 @@ export default {
       handleQuery,
       handleReset,
       handleCurrentChange,
+      handleDelete,
+      handlePatchDel,
+      handleSelectionChange,
+      formatter,
     };
   },
 };

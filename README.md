@@ -8,3 +8,28 @@ This template should help get you started developing with Vue 3 in Vite. The tem
 
 
 
+## 注释
+
+~~~txt
+角色
+role 0 管理员  1 普通用户
+
+<el-table :formatter="">
+formatter(row, columns, val) {}
+~~~
+
+~~~json
+用户
+0 所有 1 在职 2 离职 3 试用期
+	{
+        label: "用户角色",
+        prop: "role",
+        formatter(row, column, val) {
+          return {
+            0: "管理员",
+            1: "普通用户",
+          }[val];
+        },
+      },
+~~~
+
