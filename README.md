@@ -33,3 +33,16 @@ formatter(row, columns, val) {}
       },
 ~~~
 
+## 赋值
+
+再setup函数中
+
+~~~js
+const roleList = ref([])
+
+roleList.value =  await $api.getRoleList() // 错误
+
+let list =  await $api.getRoleList()
+roleList.value = list // 正确
+~~~
+

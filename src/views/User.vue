@@ -62,7 +62,13 @@
   </div>
 
   <el-dialog title="用户新增" v-model="showModal">
-    <el-form :model="userForm" label-width="auto" :label-position="left" :rules="rules">
+    <el-form
+      :model="userForm"
+      label-width="auto"
+      :label-position="left"
+      :rules="rules"
+      ref="diagForm"
+    >
       <el-form-item label="用户名" prop="userName">
         <el-input v-model="userForm.userName" placeholder="请输入用户名称" />
       </el-form-item>
@@ -72,10 +78,10 @@
         </el-input>
       </el-form-item>
       <el-form-item label="手机号" prop="mobile">
-        <el-input v-model="userForm.userEmail" placeholder="请输入手机号" />
+        <el-input v-model="userForm.mobile" placeholder="请输入手机号" />
       </el-form-item>
       <el-form-item label="岗位" prop="job">
-        <el-input v-model="userForm.userEmail" placeholder="请输入岗位" />
+        <el-input v-model="userForm.job" placeholder="请输入岗位" />
       </el-form-item>
       <el-form-item label="状态" prop="state">
         <el-select v-model="userForm.state">
@@ -86,15 +92,26 @@
       </el-form-item>
 
       <el-form-item label="系统角色" prop="roleList">
-        <el-select v-model="userForm.roleList" placeholder="请选择用户系统角色">
-          <el-option />
+        <el-select
+          style="width: 100%"
+          multiple
+          v-model="userForm.roleList"
+          placeholder="请选择用户系统角色"
+        >
+          <el-option
+            v-for="role in roleList"
+            :key="role._id"
+            :label="role.roleName"
+            :value="role._id"
+          >
+          </el-option>
         </el-select>
       </el-form-item>
 
       <el-form-item label="部门" prop="deptId">
         <el-cascader
           v-model="userForm.deptId"
-          :options="[]"
+          :options="deptList"
           :props="{ checkStrictly: true, value: '_id', label: 'deptName' }"
           clearable
           placeholder="请选择部门"
@@ -103,188 +120,238 @@
     </el-form>
     <template #footer>
       <span class="dialog-footer">
-        <el-button>Cancel</el-button>
-        <el-button type="primary">Confirm</el-button>
+        <el-button @click="handleClose(diagForm)">Cancel</el-button>
+        <el-button @click="handleSubmit(diagForm)" type="primary"
+          >Confirm</el-button
+        >
       </span>
     </template>
   </el-dialog>
 </template>
 
 <script>
-import { getCurrentInstance, onMounted, reactive, ref } from "vue";
+import { getCurrentInstance, onMounted, reactive, ref, toRaw } from 'vue'
 export default {
-  name: "user",
+  name: 'user',
   setup() {
-    const { $api } = getCurrentInstance().appContext.config.globalProperties;
+    const { $api } = getCurrentInstance().appContext.config.globalProperties
     const user = reactive({
       state: 1,
-    });
-    const age = ref(3);
-    let userList = ref([]);
+    })
+
+    let userList = ref([])
     const pager = reactive({
       pageNum: 1,
       pageSize: 10,
-    });
-    const formRef = ref();
-    let checkUserIds = ref([]); // 选中用户列表的对象
+    })
+    const formRef = ref()
+    const diagForm = ref()
+    let checkUserIds = ref([]) // 选中用户列表的对象
 
-    const showModal = ref(false); // 弹框显示
+    const showModal = ref(false) // 弹框显示
+    // 添加表单
     const userForm = reactive({
       state: 3,
-    }); // 添加表单
+    })
+
+    const roleList = ref([]) // 所有角色列表
+    const deptList = ref([]) // 所有部门列表
+
+    const action = ref('add')
+
     const rules = reactive({
       // 表单校验规则
       userName: [
         {
           required: true,
-          message: "请输入用户名",
-          trigger: "blur",
+          message: '请输入用户名',
+          trigger: 'blur',
         },
       ],
       userEmail: [
         {
           required: true,
-          message: "请输入邮箱",
-          trigger: "blur",
+          message: '请输入邮箱',
+          trigger: 'blur',
         },
       ],
       deptId: [
         {
           required: true,
-          message: "请输入部门",
-          trigger: "blur",
+          message: '请输入部门',
+          trigger: 'blur',
         },
       ],
       mobile: [
         {
           pattern: /1\d{10}/,
-          message: "请输入正确手机号",
-          trigger: "blur",
+          message: '请输入正确手机号',
+          trigger: 'blur',
         },
       ],
-    });
+    })
 
     const columns = reactive([
       {
-        label: "用户ID",
-        prop: "userId",
+        label: '用户ID',
+        prop: 'userId',
       },
       {
-        label: "用户名称",
-        prop: "userName",
+        label: '用户名称',
+        prop: 'userName',
       },
       {
-        label: "用户邮箱",
-        prop: "userEmail",
+        label: '用户邮箱',
+        prop: 'userEmail',
       },
       {
-        label: "用户角色",
-        prop: "role",
+        label: '用户角色',
+        prop: 'role',
         formatter(row, column, val) {
           return {
-            0: "管理员",
-            1: "普通用户",
-          }[val];
+            0: '管理员',
+            1: '普通用户',
+          }[val]
         },
       },
       {
-        label: "用户状态",
-        prop: "state",
+        label: '用户状态',
+        prop: 'state',
         formatter(row, column, val) {
           return {
-            1: "在职",
-            2: "离职",
-            3: "试用期",
-          }[val];
+            1: '在职',
+            2: '离职',
+            3: '试用期',
+          }[val]
         },
       },
       {
-        label: "注册时间",
-        prop: "createTime",
+        label: '注册时间',
+        prop: 'createTime',
       },
       {
-        label: "最后登录时间",
-        prop: "lastLoginTime",
+        label: '最后登录时间',
+        prop: 'lastLoginTime',
       },
-    ]);
+    ])
     const getUserList = async () => {
-      let params = { ...user, ...pager };
+      let params = { ...user, ...pager }
       try {
-        const { list, page } = await $api.getUserList(params);
-        userList.value = list;
-        pager.total = page.total;
+        const { list, page } = await $api.getUserList(params)
+        userList.value = list
+        pager.total = page.total
       } catch (err) {
-        console.log(err);
+        console.log(err)
       }
-    };
+    }
 
     onMounted(() => {
-      getUserList();
-    });
+      getUserList()
+      getDeptList()
+      getRoleList()
+    })
 
     // 查询
     const handleQuery = () => {
-      getUserList();
-    };
+      getUserList()
+    }
     const handleReset = (e) => {
-      e.resetFields();
-    };
+      e.resetFields()
+    }
 
     // 用户单个删除
     const handleDelete = async (row) => {
-      console.log(row.userId);
-      const res = await $api.userDel({ userIds: [row.userId] });
-      console.log(res);
-    };
+      console.log(row.userId)
+      const res = await $api.userDel({ userIds: [row.userId] })
+      console.log(res)
+    }
 
+    // 批量删除
     const handlePatchDel = async () => {
       if (checkUserIds.value.length == 0) {
-        alert("请选择要删除的用户");
+        alert('请选择要删除的用户')
       }
       let res = await $api.userDel({
         userIds: checkUserIds.value,
-      });
+      })
       if (res.nModified > 0) {
-        alert("删除成功");
-        getUserList();
+        alert('删除成功')
+        getUserList()
       } else {
-        alert("删除失败");
+        alert('删除失败')
       }
-      console.log(res);
-    };
+      console.log(res)
+    }
 
+    // 处理全选给checkUserIds赋值
     const handleSelectionChange = (list) => {
       // 选择的数据集
-      let arr = [];
+      let arr = []
       list.map((item) => {
-        arr.push(item.userId);
-      });
-      checkUserIds.value = arr;
-    };
-
-    const formatter = (row, column) => {
-      console.log(row);
-    };
-
+        arr.push(item.userId)
+      })
+      checkUserIds.value = arr
+    }
+    // 创建用户
     const handleCreate = () => {
-      showModal.value = true;
-    };
+      showModal.value = true
+    }
+
+    const getDeptList = async () => {
+      let list = await $api.getDeptList()
+      deptList.value = list
+      console.log(list)
+    }
+
+    const getRoleList = async () => {
+      // TODO 给ref声明地数组赋值。
+      let list = await $api.getRoleList()
+      roleList.value = list
+    }
+
+    //关闭提交弹框
+    const handleClose = (diagForm) => {
+      showModal.value = false
+      handleReset(diagForm)
+    }
+
+    /**
+     * 新增用户
+     * 需要传递 当前表单
+     */
+    const handleSubmit = (diagForm) => {
+      diagForm.validate(async (valid) => {
+        if (valid) {
+          let params = toRaw(userForm)
+          params.action = action.value // 添加还是删除
+          params.userEmail += '@imooc.com'
+          let res = await $api.userSubmit(params)
+          if (res) {
+            showModal.value = false
+            alert('添加成功')
+            handleReset(diagForm)
+          }
+        }
+      })
+    }
 
     // 分页时间
     const handleCurrentChange = (currentPage) => {
-      pager.pageNum = currentPage;
-      getUserList();
-    };
+      pager.pageNum = currentPage
+      getUserList()
+    }
     return {
       user,
-      age,
       columns,
       userList,
       pager,
       formRef,
+      diagForm,
       showModal,
       userForm,
       rules,
+      roleList,
+      deptList,
       getUserList,
       handleQuery,
       handleReset,
@@ -292,11 +359,14 @@ export default {
       handleDelete,
       handlePatchDel,
       handleSelectionChange,
-      formatter,
       handleCreate,
-    };
+      getDeptList,
+      getRoleList,
+      handleClose,
+      handleSubmit,
+    }
   },
-};
+}
 </script>
 
 <style lang="scss" scoped>
