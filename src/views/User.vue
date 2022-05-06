@@ -40,7 +40,7 @@
         />
         <el-table-column fixed="right" label="Operations" width="120">
           <template #default="scope">
-            <el-button @click="handleEdit(scppe.row)" type="text" size="small"
+            <el-button @click="handleEdit(scope.row)" type="text" size="small"
               >编辑</el-button
             >
             <el-button @click="handleDelete(scope.row)" type="text" size="small"
@@ -65,15 +65,23 @@
     <el-form
       :model="userForm"
       label-width="auto"
-      :label-position="left"
+      label-position="left"
       :rules="rules"
       ref="diagForm"
     >
       <el-form-item label="用户名" prop="userName">
-        <el-input v-model="userForm.userName" placeholder="请输入用户名称" />
+        <el-input
+          v-model="userForm.userName"
+          :disabled="action == 'edit'"
+          placeholder="请输入用户名称"
+        />
       </el-form-item>
       <el-form-item label="用户邮箱" prop="userEmail">
-        <el-input v-model="userForm.userEmail" placeholder="请输入用户邮箱">
+        <el-input
+          v-model="userForm.userEmail"
+          :disabled="action == 'edit'"
+          placeholder="请输入用户邮箱"
+        >
           <template #append> @imooc.com </template>
         </el-input>
       </el-form-item>
@@ -130,7 +138,14 @@
 </template>
 
 <script>
-import { getCurrentInstance, onMounted, reactive, ref, toRaw } from 'vue'
+import {
+  getCurrentInstance,
+  onMounted,
+  reactive,
+  ref,
+  toRaw,
+  nextTick,
+} from 'vue'
 export default {
   name: 'user',
   setup() {
@@ -255,6 +270,7 @@ export default {
     const handleQuery = () => {
       getUserList()
     }
+    // 重置
     const handleReset = (e) => {
       e.resetFields()
     }
@@ -294,6 +310,7 @@ export default {
     }
     // 创建用户
     const handleCreate = () => {
+      action.value = 'add'
       showModal.value = true
     }
 
@@ -335,6 +352,13 @@ export default {
       })
     }
 
+    const handleEdit = async (row) => {
+      action.value = 'edit'
+      showModal.value = true
+      await nextTick()
+      Object.assign(userForm, row)
+    }
+
     // 分页时间
     const handleCurrentChange = (currentPage) => {
       pager.pageNum = currentPage
@@ -352,6 +376,7 @@ export default {
       rules,
       roleList,
       deptList,
+      action,
       getUserList,
       handleQuery,
       handleReset,
@@ -364,6 +389,7 @@ export default {
       getRoleList,
       handleClose,
       handleSubmit,
+      handleEdit,
     }
   },
 }
