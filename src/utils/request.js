@@ -6,7 +6,7 @@ import {
 	ElMessage
 } from 'element-plus'
 import config from '../config'
-import router from '../router'
+import router from '../router' // 引入route 可以在js页面跳转到vue页面
 import storage from './storage'
 
 const TOKEN_INVALID = 'token认证失败，请重新登录'
@@ -60,7 +60,7 @@ function request (options) {
 	if (typeof options.mock != 'undefined') {
 		config.mock = options.mock
 	}
-	if (config.env === 'prod') {
+	if (config.env == 'prod') {
 		service.defaults.baseURL = config.baseApi
 	} else {
 		service.defaults.baseURL = config.mock ? config.mockApi : config.baseApi

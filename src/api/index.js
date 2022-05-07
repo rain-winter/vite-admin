@@ -33,6 +33,7 @@ export default {
 			method: 'get',
 			url: '/users/list',
 			data: params,
+			mock: false
 		})
 	},
 	userDel (params) {

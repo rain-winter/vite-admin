@@ -146,6 +146,7 @@ import {
   toRaw,
   nextTick,
 } from 'vue'
+import utils from '../utils/utils'
 export default {
   name: 'user',
   setup() {
@@ -159,6 +160,7 @@ export default {
       pageNum: 1,
       pageSize: 10,
     })
+
     const formRef = ref()
     const diagForm = ref()
     let checkUserIds = ref([]) // 选中用户列表的对象
@@ -243,29 +245,33 @@ export default {
       {
         label: '注册时间',
         prop: 'createTime',
+        formatter(row, column, val) {
+          return utils.formateDate(new Date(val))
+        },
       },
       {
         label: '最后登录时间',
         prop: 'lastLoginTime',
       },
     ])
-    const getUserList = async () => {
-      let params = { ...user, ...pager }
-      try {
-        const { list, page } = await $api.getUserList(params)
-        userList.value = list
-        pager.total = page.total
-      } catch (err) {
-        console.log(err)
-      }
-    }
 
     onMounted(() => {
       getUserList()
       getDeptList()
       getRoleList()
     })
-
+    const getUserList = async () => {
+      let params = { ...user, ...pager }
+      try {
+        const { list, page } = await $api.getUserList(params)
+        userList.value = list
+        pager.total = page.total
+        console.log(list)
+        console.log(page)
+      } catch (err) {
+        console.log(err)
+      }
+    }
     // 查询
     const handleQuery = () => {
       getUserList()
