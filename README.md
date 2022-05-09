@@ -42,7 +42,6 @@ state 0 所有    1 在职     2 离职    3 试用期
    clearable
    placeholder="请选择部门">
 </el-cascader>
-//
 ~~~
 
 ## ref赋值
@@ -52,7 +51,7 @@ state 0 所有    1 在职     2 离职    3 试用期
 ~~~js
 const roleList = ref([])
 
-roleList.value =  await $api.getRoleList() // 错误
+roleList.value =  await $api.getRoleList() // 错误，不可以直接赋值
 
 let list =  await $api.getRoleList() // 接收再赋值
 roleList.value = list // 正确

@@ -57,14 +57,21 @@ function request (options) {
 	if (options.method.toLowerCase() === 'get') {
 		options.params = options.data
 	}
+
+	let isMock = config.mock
+
+	// 如果options里有mock变量，就去mock
 	if (typeof options.mock != 'undefined') {
-		config.mock = options.mock
+		//config.mock=options.mock 此时optons.mock会把config.mock覆盖
+		isMock = options.mock
 	}
+
 	if (config.env == 'prod') {
 		service.defaults.baseURL = config.baseApi
 	} else {
-		service.defaults.baseURL = config.mock ? config.mockApi : config.baseApi
+		service.defaults.baseURL = isMock ? config.mockApi : config.baseApi
 	}
+
 	return service(options)
 };
 ['get', 'post', 'put', 'delete', 'patch'].forEach((item) => {

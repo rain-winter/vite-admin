@@ -11,10 +11,10 @@
         </el-form-item>
         <el-form-item label="状态" prop="state">
           <el-select v-model="user.state" placeholder="请选择">
-            <el-option :value="0" lablel="所有"></el-option>
-            <el-option :value="1" lablel="在职"></el-option>
-            <el-option :value="2" lablel="离职"></el-option>
-            <el-option :value="3" lablel="审批"></el-option>
+            <el-option label="所有" :value="0" />
+            <el-option label="在职" :value="1" />
+            <el-option label="离职" :value="2" />
+            <el-option label="审批" :value="3" />
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -50,14 +50,14 @@
         </el-table-column>
       </el-table>
       <!-- 分页 -->
-      <el-pagination
+      <!-- <el-pagination
         class="pagination"
         @current-change="handleCurrentChange"
         background
         layout="prev, pager, next"
         :total="pager.total"
         :page-size="pager.pageSize"
-      />
+      /> -->
     </div>
   </div>
 
@@ -152,7 +152,7 @@ export default {
   setup() {
     const { $api } = getCurrentInstance().appContext.config.globalProperties
     const user = reactive({
-      state: 1,
+      state: 0,
     })
 
     let userList = ref([])
@@ -201,7 +201,7 @@ export default {
       ],
       mobile: [
         {
-          pattern: /1\d{10}/,
+          pattern: /1[3-9]\d{9}/,
           message: '请输入正确手机号',
           trigger: 'blur',
         },
@@ -220,6 +220,10 @@ export default {
       {
         label: '用户邮箱',
         prop: 'userEmail',
+      },
+      {
+        label: '岗位',
+        prop: 'job',
       },
       {
         label: '用户角色',
@@ -264,10 +268,9 @@ export default {
       let params = { ...user, ...pager }
       try {
         const { list, page } = await $api.getUserList(params)
+        console.log('job', list)
         userList.value = list
         pager.total = page.total
-        console.log(list)
-        console.log(page)
       } catch (err) {
         console.log(err)
       }
@@ -351,7 +354,7 @@ export default {
           let res = await $api.userSubmit(params)
           if (res) {
             showModal.value = false
-            alert('添加成功')
+            alert(`${添加}成功`)
             handleReset(diagForm)
           }
         }
@@ -363,6 +366,7 @@ export default {
       showModal.value = true
       await nextTick()
       Object.assign(userForm, row)
+      console.log(toRaw(userForm))
     }
 
     // 分页时间
