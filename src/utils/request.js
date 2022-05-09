@@ -22,7 +22,9 @@ const service = axios.create({
 service.interceptors.request.use((req) => {
 	const headers = req.headers
 	// TODO 获取token
-	const { token } = storage.getItem('userInfo') || ''
+	const {
+		token
+	} = storage.getItem('userInfo') || ''
 	// console.log('token', token)
 
 	if (!headers.Authorization) headers.Authorization = 'Bearer ' + token
@@ -39,8 +41,12 @@ service.interceptors.response.use((res) => {
 		return data
 	} else if (code === 40001) {
 		ElMessage.error(TOKEN_INVALID)
-		setTimeout(() => { }, 1500)
+		setTimeout(() => {}, 1500)
+		router.push({
+			path: '/login'
+		})
 		return Promise.reject(TOKEN_INVALID)
+
 	} else {
 		ElMessage.error(msg || NETWORK_ERROR)
 		return Promise.reject(msg || NETWORK_ERROR)
@@ -52,7 +58,7 @@ service.interceptors.response.use((res) => {
  * @param {*} options  请求配置
  * @returns
  */
-function request (options) {
+function request(options) {
 	options.method = options.method || 'get'
 	if (options.method.toLowerCase() === 'get') {
 		options.params = options.data

@@ -38,26 +38,28 @@
           :formatter="item.formatter"
           width="180"
         />
-        <el-table-column fixed="right" label="Operations" width="120">
+        <el-table-column fixed="right" label="Operations" width="140">
           <template #default="scope">
-            <el-button @click="handleEdit(scope.row)" type="text" size="small"
+            <el-button @click="handleEdit(scope.row)" text size="small"
               >编辑</el-button
             >
-            <el-button @click="handleDelete(scope.row)" type="text" size="small"
+            <el-button
+              @click="handleDelete(scope.row)"
+              type="danger"
+              size="small"
               >删除</el-button
             >
           </template>
         </el-table-column>
       </el-table>
       <!-- 分页 -->
-      <!-- <el-pagination
+      <el-pagination
         class="pagination"
-        @current-change="handleCurrentChange"
         background
         layout="prev, pager, next"
         :total="pager.total"
         :page-size="pager.pageSize"
-      /> -->
+      />
     </div>
   </div>
 
@@ -160,6 +162,7 @@ export default {
     const pager = reactive({
       pageNum: 1,
       pageSize: 10,
+      total: 0,
     })
 
     const formRef = ref()
@@ -256,7 +259,10 @@ export default {
       },
       {
         label: '最后登录时间',
-        prop: 'lastLoginTime',
+        prop: 'updateTime',
+        formatter(row, column, val) {
+          return utils.formateDate(new Date(val))
+        },
       },
     ])
 
@@ -271,6 +277,7 @@ export default {
         const { list, page } = await $api.getUserList(params)
         userList.value = list
         pager.total = page.total
+        console.log('page.total=>', page.total)
       } catch (err) {
         console.log(err)
       }
@@ -354,9 +361,8 @@ export default {
           let res = await $api.userSubmit(params)
           if (res) {
             showModal.value = false
-            message.success(
-              `${res.userName}${action.value == 'add' ? '添加' : '编辑'}成功`
-            )
+            message.success(`${action.value == 'add' ? '添加' : '编辑'}成功`)
+            getUserList()
             handleReset(diagForm)
           }
         }
@@ -409,5 +415,9 @@ export default {
 <style lang="scss" scoped>
 .action {
   padding: 20px;
+}
+.pagination {
+  text-align: right !important;
+  padding: 10px;
 }
 </style>

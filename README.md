@@ -69,5 +69,19 @@ const handleEdit(row){
 }
 ~~~
 
+# mongoose
 
+## 主键递增
+
+新建`counters`表。里面存放`userId`和`sequence_value`。其中sequence_value从1开始，每当我们插入用户时，让其＋1作为用户id。
+
+~~~js
+const doc = await Counter.findOneAndUpdate({
+    _id: 'userId'
+},{
+    $inc: {
+        sequence_value: 1 // 让其新增1
+    }
+},{ new: true })
+~~~
 

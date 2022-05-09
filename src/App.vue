@@ -12,6 +12,6 @@
 
 <style>
 /* 引入全局的样式 */
-@import "./assets/style/index.sass";
 @import "./assets/style/reset.css";
+@import './assets/style/index.sass'
 </style>
