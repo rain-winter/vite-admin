@@ -147,6 +147,7 @@ import {
   nextTick,
 } from 'vue'
 import utils from '../utils/utils'
+import message from '../utils/message'
 export default {
   name: 'user',
   setup() {
@@ -268,7 +269,6 @@ export default {
       let params = { ...user, ...pager }
       try {
         const { list, page } = await $api.getUserList(params)
-        console.log('job', list)
         userList.value = list
         pager.total = page.total
       } catch (err) {
@@ -288,7 +288,7 @@ export default {
     const handleDelete = async (row) => {
       console.log(row.userId)
       const res = await $api.userDel({ userIds: [row.userId] })
-      console.log(res)
+      message.success('删除成功')
     }
 
     // 批量删除
@@ -299,13 +299,13 @@ export default {
       let res = await $api.userDel({
         userIds: checkUserIds.value,
       })
-      if (res.nModified > 0) {
-        alert('删除成功')
-        getUserList()
-      } else {
-        alert('删除失败')
-      }
-      console.log(res)
+      // if (res.nModified > 0) {
+      //   alert('删除成功')
+      //   getUserList()
+      // } else {
+      //   alert('删除失败')
+      // }
+      message.success('删除成功')
     }
 
     // 处理全选给checkUserIds赋值
@@ -354,7 +354,9 @@ export default {
           let res = await $api.userSubmit(params)
           if (res) {
             showModal.value = false
-            alert(`${添加}成功`)
+            message.success(
+              `${res.userName}${action.value == 'add' ? '添加' : '编辑'}成功`
+            )
             handleReset(diagForm)
           }
         }
@@ -366,7 +368,6 @@ export default {
       showModal.value = true
       await nextTick()
       Object.assign(userForm, row)
-      console.log(toRaw(userForm))
     }
 
     // 分页时间
