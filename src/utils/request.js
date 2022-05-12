@@ -37,6 +37,7 @@ service.interceptors.response.use((res) => {
 		data,
 		msg
 	} = res.data
+	// 拦截了状态码是200
 	if (code === 200) {
 		return data
 	} else if (code === 40001) {
@@ -46,8 +47,9 @@ service.interceptors.response.use((res) => {
 			path: '/login'
 		})
 		return Promise.reject(TOKEN_INVALID)
-
 	} else {
+		// 对状态码不是200的进行捕获
+		// 所以后续接口可以不考虑接口的状态
 		ElMessage.error(msg || NETWORK_ERROR)
 		return Promise.reject(msg || NETWORK_ERROR)
 	}

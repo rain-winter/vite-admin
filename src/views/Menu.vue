@@ -14,7 +14,7 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" @click="handleQuery">查询</el-button>
+          <el-button type="primary" @click="getMenuList()">查询</el-button>
           <el-button @click="handleReset(formRef)">重置</el-button>
         </el-form-item>
       </el-form>
@@ -44,7 +44,7 @@
               >编辑</el-button
             >
             <el-button
-              @click="handleDelete(scope.row)"
+              @click="handleDelete(scope.row._id)"
               type="danger"
               size="small"
               >删除</el-button
@@ -56,11 +56,7 @@
   </div>
 
   <!-- 按钮新增 -->
-  <el-dialog
-    title="按钮新增"
-    draggable
-    v-model="showModal"
-  >
+  <el-dialog title="按钮新增" draggable v-model="showModal">
     <el-form
       :model="menuForm"
       label-width="auto"
@@ -80,37 +76,51 @@
         >
       </el-form-item>
 
-      <el-form-item label="菜单类型" prop="menuState">
-        <el-radio-group v-model="menuForm.menuState">
-          <el-radio label="1">菜单</el-radio>
-          <el-radio label="2">按钮</el-radio>
+      <el-form-item label="菜单类型" prop="menuType">
+        <el-radio-group v-model="menuForm.menuType">
+          <el-radio :label="1">菜单</el-radio>
+          <el-radio :label="2">按钮</el-radio>
         </el-radio-group>
       </el-form-item>
 
-      <el-form-item label="菜单名称" prop="menuName">
+      <el-form-item
+        :label="menuForm.menuType == 1 ? '菜单名称' : '按钮名称'"
+        prop="menuName"
+      >
         <el-input v-model="menuForm.menuName" placeholder="请输入菜单名称" />
       </el-form-item>
 
-      <el-form-item label="菜单图标" prop="icon">
+      <el-form-item label="菜单图标" prop="icon" v-if="menuForm.menuType == 1">
         <el-input v-model="menuForm.icon" placeholder="请输入菜单图标" />
       </el-form-item>
 
-      <el-form-item label="路由地址" prop="path">
+      <el-form-item label="路由地址" prop="path" v-if="menuForm.menuType == 1">
         <el-input v-model="menuForm.path" placeholder="请输入路由地址" />
       </el-form-item>
 
-      <el-form-item label="权限标识" prop="menuCode">
+      <el-form-item
+        label="权限标识"
+        prop="menuCode"
+        v-if="menuForm.menuType == 2"
+      >
         <el-input v-model="menuForm.menuCode" placeholder="请输入权限标识" />
       </el-form-item>
 
-      <el-form-item label="组件路径" prop="component">
+      <el-form-item
+        label="组件路径"
+        prop="component"
+        v-if="menuForm.menuType == 1"
+      >
         <el-input v-model="menuForm.component" placeholder="请输入组件路径" />
       </el-form-item>
 
-      <el-form-item label="菜单状态" prop="menuType">
-        <el-radio-group v-model="menuForm.menuType">
-          <el-radio label="1">正常</el-radio>
-          <el-radio label="2">停用</el-radio>
+      <el-form-item
+        :label="menuForm.menuType == 1 ? '菜单状态' : '按钮状态'"
+        prop="menuState"
+      >
+        <el-radio-group v-model="menuForm.menuState">
+          <el-radio :label="1">正常</el-radio>
+          <el-radio :label="2">停用</el-radio>
         </el-radio-group>
       </el-form-item>
     </el-form>
@@ -135,7 +145,10 @@ const $api = inject('$api')
 const queryForm = ref({
   menuState: 2,
 })
-const menuForm = reactive({}) // 添加按钮的表单
+let menuForm = reactive({
+  menuType: 1, // 菜单名称/按钮名称
+  menuState: 1, // 正常还是停用
+}) // 添加按钮的表单
 const showModal = ref(false) // 弹框
 const action = ref('') // 添加/编辑
 const formRef = ref('') // 表单实例
@@ -209,34 +222,45 @@ const columns = ref([
     },
   },
 ])
-const handleCreate = () => {}
-const handleQuery = () => {}
 
-// 重置表单
+/**
+ * 重置表单
+ * @param {*} e 表单实例
+ */
 const handleReset = (e) => {
   e.resetFields()
 }
-// 表单提交
+/**
+ * 按钮 - 表单提交
+ * @param {*} diagForm 表单实例，用于重置表单
+ */
 const handleSubmit = (diagForm) => {
   diagForm.validate(async (valid) => {
     if (valid) {
       let params = { ...menuForm, action }
-      console.log('params', params)
       let res = await $api.menuSubmit(params)
       showModal.value = false
-      message.success('操作成功')
-      handleReset(diagForm)
-      getMenuList()
+      message.success('操作成功') // 消息弹框
+      handleReset(diagForm) // 重置表单
+      getMenuList() // 重新获取按钮列表
     }
   })
 }
 
-// 关闭弹框
+/**
+ * 关闭弹框
+ * @param {*} e 表单实例
+ */
 const handleClose = (e) => {
   handleReset(e)
   showModal.value = false
 }
 
+/**
+ * 按钮添加
+ * @param {*} type 1/2 1 是最上的添加 2是在行里添加
+ * @param {*} row  type=2 时，行数据
+ */
 const handleAdd = async (type, row) => {
   showModal.value = true
   action.value = 'add'
@@ -246,9 +270,33 @@ const handleAdd = async (type, row) => {
   }
 }
 
-const handleEdit = () => {}
-const handleDelete = () => {}
+/**
+ * 编辑
+ * @param {*} row 当前行数据
+ */
+const handleEdit = async (row) => {
+  showModal.value = true
+  action.value = 'edit'
+  await nextTick() // 在渲染出弹框后再赋值。（赋值快于dom渲染）
+  Object.assign(menuForm, row)
+}
 
+/**
+ * 删除
+ * @param {*} _id
+ */
+const handleDelete = async (_id) => {
+  await $api.menuSubmit({
+    _id,
+    action: 'delete',
+  })
+  message.success('删除成功')
+  getMenuList()
+}
+
+/**
+ * 获取按钮列表
+ */
 const getMenuList = async () => {
   try {
     const res = await $api.getMenuList(queryForm)
@@ -257,9 +305,6 @@ const getMenuList = async () => {
     throw new Error(error)
   }
 }
-
-const leave = () => {}
-
 getMenuList() // 获取按钮列表
 </script>
 <style lang="scss" scoped>

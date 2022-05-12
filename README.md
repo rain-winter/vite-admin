@@ -62,6 +62,7 @@ roleList.value = list // 正确
 
 ~~~js
 import { nextTick } from 'vue'
+const userForm = reactive({})
 const handleEdit(row){
     action.value = 'edit'
     showModal.value=true
