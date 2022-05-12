@@ -13,17 +13,20 @@ import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 // if you're using CDN, please remove this line.
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
-
+// import 'default-passive-events'
 
 import request from './utils/request' // 引入request
 import api from './api'
 import storage from './utils/storage'
 
 const app = createApp(App)
-app.provide('$api', api)
+app.provide('$api', api) // 挂载api
+
+// 引用ElementuiPlus所有的icon图标
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
+
 // app.config.globalProperties.$request = request // 全局挂在request函数
 // app.config.globalProperties.$api = api // 全局挂在request函数
 // app.config.globalProperties.$storage = storage

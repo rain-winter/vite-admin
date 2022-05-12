@@ -74,6 +74,7 @@ const handleEdit(row){
 
 ~~~js
 // 这里时main.js
+import api from ''
 app.provide('$api', api) // 将api变量挂载到$api
 ~~~
 
@@ -103,5 +104,3 @@ const doc = await Counter.findOneAndUpdate({
     }
 },{ new: true })
 ~~~
-
-yarn upgrade-interactive --latest

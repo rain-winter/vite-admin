@@ -56,7 +56,11 @@
   </div>
 
   <!-- 按钮新增 -->
-  <el-dialog title="按钮新增" @click="handleAdd(1)" v-model="showModal">
+  <el-dialog
+    title="按钮新增"
+    draggable
+    v-model="showModal"
+  >
     <el-form
       :model="menuForm"
       label-width="auto"
@@ -71,7 +75,9 @@
           :props="{ checkStrictly: true, value: '_id', label: 'menuName' }"
           clearable
         />
-        <!-- <span>不选，则直接创建一级菜单</span> -->
+        <span style="color: #999; margin-left: 10px"
+          >不选，则直接创建一级菜单</span
+        >
       </el-form-item>
 
       <el-form-item label="菜单类型" prop="menuState">
@@ -121,7 +127,7 @@
 </template>
 
 <script setup>
-import { ref, inject, reactive } from 'vue'
+import { ref, inject, reactive, nextTick, toRaw } from 'vue'
 import message from '../utils/message'
 import utils from '../utils/utils'
 const $api = inject('$api')
@@ -129,7 +135,7 @@ const $api = inject('$api')
 const queryForm = ref({
   menuState: 2,
 })
-const menuForm = ref({}) // 添加按钮的表单
+const menuForm = reactive({}) // 添加按钮的表单
 const showModal = ref(false) // 弹框
 const action = ref('') // 添加/编辑
 const formRef = ref('') // 表单实例
@@ -215,8 +221,8 @@ const handleSubmit = (diagForm) => {
   diagForm.validate(async (valid) => {
     if (valid) {
       let params = { ...menuForm, action }
+      console.log('params', params)
       let res = await $api.menuSubmit(params)
-      console.log(res)
       showModal.value = false
       message.success('操作成功')
       handleReset(diagForm)
@@ -231,13 +237,13 @@ const handleClose = (e) => {
   showModal.value = false
 }
 
-const handleAdd = (type, row) => {
+const handleAdd = async (type, row) => {
   showModal.value = true
   action.value = 'add'
   if (type == 2) {
+    await nextTick()
     menuForm.parentId = [...row.parentId, row._id].filter((item) => item)
   }
-  console.log(menuForm.value)
 }
 
 const handleEdit = () => {}
@@ -251,6 +257,8 @@ const getMenuList = async () => {
     throw new Error(error)
   }
 }
+
+const leave = () => {}
 
 getMenuList() // 获取按钮列表
 </script>
