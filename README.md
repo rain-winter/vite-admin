@@ -13,6 +13,7 @@ This template should help get you started developing with Vue 3 in Vite. The tem
 ~~~txt
 role  0 管理员  1 普通用户
 state 0 所有    1 在职     2 离职    3 试用期
+menuType 1菜单 2 按钮
 ~~~
 
 ## 格式化
@@ -69,6 +70,24 @@ const handleEdit(row){
 }
 ~~~
 
+## vue3全局挂载
+
+~~~js
+// 这里时main.js
+app.provide('$api', api) // 将api变量挂载到$api
+~~~
+
+~~~js
+// .vue
+import { inject } from 'vue'
+const $api = inject('$api') // 引用全局的$api
+$api.login().then(res=>{})
+~~~
+
+## yarn 更新依赖包
+
+`yarn upgrade-interactive --latest`
+
 # mongoose
 
 ## 主键递增
@@ -85,3 +104,4 @@ const doc = await Counter.findOneAndUpdate({
 },{ new: true })
 ~~~
 
+yarn upgrade-interactive --latest

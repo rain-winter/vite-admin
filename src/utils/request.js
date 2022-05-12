@@ -15,7 +15,7 @@ const NETWORK_ERROR = '网络请求异常'
 // 创建axios对象，添加全局配置
 const service = axios.create({
 	baseURL: config.baseApi,
-	timeout: 10000,
+	timeout: 20000,
 })
 
 // 请求拦截

@@ -2,10 +2,12 @@
  * aoi 管理
  */
 import request from '../utils/request'
-import { ElMessage } from 'element-plus'
+import {
+	ElMessage
+} from 'element-plus'
 
 export default {
-	login (params) {
+	login(params) {
 		return request({
 			method: 'post',
 			url: '/users/login',
@@ -13,7 +15,7 @@ export default {
 		})
 	},
 	// 首页消息
-	noticeCount () {
+	noticeCount() {
 		return request({
 			method: 'get',
 			url: '/leave/count',
@@ -21,46 +23,55 @@ export default {
 			mock: true
 		})
 	},
-	getMenuList () {
+	// 获取菜单列表
+	getMenuList() {
 		return request({
 			method: 'get',
 			url: '/menu/list',
 			mock: true
 		})
 	},
-	getUserList (params) {
+	getUserList(params) {
 		return request({
 			method: 'get',
 			url: '/users/list',
 			data: params,
 		})
 	},
-	userDel (params) {
+	userDel(params) {
 		return request({
 			method: 'post',
 			url: '/users/delete',
 			data: params,
 		})
 	},
-	getRoleList () {
+	getRoleList() {
 		return request({
 			method: 'get',
 			url: '/roles/allList',
 			mock: true
 		})
 	},
-	getDeptList () {
+	getDeptList() {
 		return request({
 			url: '/dept/list',
 			method: 'get',
 			mock: true
 		})
 	},
-	userSubmit (param) {
+	userSubmit(params) {
 		return request({
 			url: '/users/operate',
 			method: 'post',
-			data: param
+			data: params
+		})
+	},
+	menuSubmit(params) {
+		return request({
+			url: '/menu/operate',
+			method: 'post',
+			data: params,
+			mock: true
 		})
 	}
 }

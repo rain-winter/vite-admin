@@ -150,12 +150,13 @@ import {
 } from 'vue'
 import utils from '../utils/utils'
 import message from '../utils/message'
+import $api from '../api/index'
 export default {
   name: 'user',
   setup() {
-    const { $api } = getCurrentInstance().appContext.config.globalProperties
+    // const { $api } = getCurrentInstance().appContext.config.globalProperties
     const user = reactive({
-      state: 0,
+      state: 1,
     })
 
     let userList = ref([])

@@ -11,6 +11,7 @@
     >
       <template #title>
         <el-icon><setting /></el-icon>
+
         <span>{{ menu.menuName }}</span>
       </template>
 
