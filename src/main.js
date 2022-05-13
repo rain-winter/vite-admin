@@ -4,7 +4,6 @@ import {
 import router from './router'
 import App from './App.vue'
 import store from './store'
-
 // console.log(process.env)  在vue中可以获取
 // 在 vite 里
 // console.log(import.meta.env)

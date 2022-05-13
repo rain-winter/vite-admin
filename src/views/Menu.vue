@@ -8,13 +8,13 @@
         </el-form-item>
         <el-form-item label="菜单状态" prop="queryForm">
           <el-select v-model="queryForm.menuState" placeholder="请选择">
-            <el-option label="菜单" :value="1" />
-            <el-option label="按钮" :value="2" />
+            <el-option label="正常" :value="1" />
+            <el-option label="停用" :value="2" />
           </el-select>
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" @click="getMenuList()">查询</el-button>
+          <el-button type="primary" @click="getMenuList">查询</el-button>
           <el-button @click="handleReset(formRef)">重置</el-button>
         </el-form-item>
       </el-form>
@@ -32,14 +32,17 @@
           :formatter="item.formatter"
           width="180"
         />
-        <el-table-column fixed="right" label="Operations" width="200">
+        <el-table-column fixed="right" label="Operations" width="195">
           <template #default="scope">
             <el-button
               @click="handleAdd(2, scope.row)"
               type="primary"
               size="small"
+              v-if="scope.row.menuType==1"
               >新增</el-button
             >
+            <!-- <div v-if=
+            "scope.row.menuType==2" style="width:48px">12</div> -->
             <el-button @click="handleEdit(scope.row)" text size="small"
               >编辑</el-button
             >
@@ -143,9 +146,10 @@ import utils from '../utils/utils'
 const $api = inject('$api')
 
 const queryForm = ref({
-  menuState: 2,
+  menuState: 1,
 })
 let menuForm = reactive({
+  parentId: [null],
   menuType: 1, // 菜单名称/按钮名称
   menuState: 1, // 正常还是停用
 }) // 添加按钮的表单
@@ -237,8 +241,9 @@ const handleReset = (e) => {
 const handleSubmit = (diagForm) => {
   diagForm.validate(async (valid) => {
     if (valid) {
-      let params = { ...menuForm, action }
-      let res = await $api.menuSubmit(params)
+      // 结构时，由于action是ref代理的，所以要 action: action.value
+      let params = { ...menuForm, action: action.value }
+      await $api.menuSubmit(params)
       showModal.value = false
       message.success('操作成功') // 消息弹框
       handleReset(diagForm) // 重置表单
@@ -299,7 +304,7 @@ const handleDelete = async (_id) => {
  */
 const getMenuList = async () => {
   try {
-    const res = await $api.getMenuList(queryForm)
+    const res = await $api.getMenuList(queryForm.value)
     menuList.value = res
   } catch (error) {
     throw new Error(error)

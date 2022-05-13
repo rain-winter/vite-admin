@@ -28,7 +28,7 @@
         <el-button @click="handleCreate" type="primary">新增</el-button>
         <el-button @click="handlePatchDel" type="danger">批量删除</el-button>
       </div>
-      <el-table :data="userList" @selection-change="handleSelectionChange">
+      <el-table :data="userList"  @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" />
         <el-table-column
           v-for="(item, index) in columns"
@@ -56,7 +56,7 @@
       <el-pagination
         class="pagination"
         background
-        layout="prev, pager, next"
+        layout="->, prev, pager, next"
         :total="pager.total"
         :page-size="pager.pageSize"
       />
@@ -141,7 +141,6 @@
 
 <script>
 import {
-  getCurrentInstance,
   onMounted,
   reactive,
   ref,
@@ -270,7 +269,7 @@ export default {
     onMounted(() => {
       getUserList()
       getDeptList()
-      getRoleList()
+      getRoleAllList()
     })
     const getUserList = async () => {
       let params = { ...user, ...pager }
@@ -297,6 +296,7 @@ export default {
       console.log(row.userId)
       const res = await $api.userDel({ userIds: [row.userId] })
       message.success('删除成功')
+      getUserList()
     }
 
     // 批量删除
@@ -337,9 +337,9 @@ export default {
       console.log(list)
     }
 
-    const getRoleList = async () => {
+    const getRoleAllList = async () => {
       // TODO 给ref声明地数组赋值。
-      let list = await $api.getRoleList()
+      let list = await $api.getRoleAllList()
       roleList.value = list
     }
 
@@ -362,9 +362,9 @@ export default {
           let res = await $api.userSubmit(params)
           if (res) {
             showModal.value = false
+            handleReset(diagForm)
             message.success(`${action.value == 'add' ? '添加' : '编辑'}成功`)
             getUserList()
-            handleReset(diagForm)
           }
         }
       })
@@ -404,7 +404,7 @@ export default {
       handleSelectionChange,
       handleCreate,
       getDeptList,
-      getRoleList,
+      getRoleAllList,
       handleClose,
       handleSubmit,
       handleEdit,
@@ -417,8 +417,5 @@ export default {
 .action {
   padding: 20px;
 }
-.pagination {
-  text-align: right !important;
-  padding: 10px;
-}
+
 </style>

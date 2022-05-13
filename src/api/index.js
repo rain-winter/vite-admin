@@ -24,11 +24,11 @@ export default {
 		})
 	},
 	// 获取菜单列表
-	getMenuList() {
+	getMenuList(params) {
 		return request({
 			method: 'get',
 			url: '/menu/list',
-			mock: true
+			data: params
 		})
 	},
 	getUserList(params) {
@@ -45,10 +45,17 @@ export default {
 			data: params,
 		})
 	},
-	getRoleList() {
+	getRoleAllList() {
 		return request({
 			method: 'get',
 			url: '/roles/allList',
+			mock: true
+		})
+	},
+	getRoleList() {
+		return request({
+			method: 'get',
+			url: '/roles/list',
 			mock: true
 		})
 	},
@@ -69,6 +76,13 @@ export default {
 	menuSubmit(params) {
 		return request({
 			url: '/menu/operate',
+			method: 'post',
+			data: params,
+		})
+	},
+	roleOperate(params) {
+		return request({
+			url: '/roles/operate',
 			method: 'post',
 			data: params,
 			mock: true

@@ -92,6 +92,41 @@ $api.login().then(res=>{})
 
 # mongoose
 
+## 模型
+
+~~~js
+const mongoose = require('mongoose')
+
+const menuSchema = mongoose.Schema({
+  menuType: Number, // 菜单类型
+  menuName: String, // 菜单名称
+  menuCode: String, // 菜单名字
+  path: String, // 路由地址
+  icon: String, // 图标
+  component: String, // 组件地址
+  menuState: Number, //菜单状态
+  parentId: [mongoose.Types.ObjectId], // 父级菜单的id
+  "createTime": {
+    type: Date,
+    default: Date.now()
+  },
+  "updateTime": {
+    type: Date,
+    default: Date.now()
+  },
+})
+
+/**
+ * (1) 导出模型 ， 叫做menus
+ * (2) menuSchema
+ * (3) menus 创建数据库集合menus
+ */
+// 需要注意的是只有当第一个参数是menu单数，才会在数据库里创建menus集合
+module.exports = mongoose.model('menu', menuSchema)
+~~~
+
+
+
 ## 主键递增
 
 新建`counters`表。里面存放`userId`和`sequence_value`。其中sequence_value从1开始，每当我们插入用户时，让其＋1作为用户id。
@@ -105,3 +140,34 @@ const doc = await Counter.findOneAndUpdate({
     }
 },{ new: true })
 ~~~
+
+## Model.create()
+
+~~~js
+const { _id, action, ...params} = ctx.request.body
+await Menu.create(params)
+~~~
+
+## Model.findByIdAndUpdate()
+
+~~~js
+params.updateTime = new Date()
+await Menu.findByIdAndUpdate(_id, params) // params 是其余字段
+~~~
+
+## 级联删除
+
+~~~js
+await Menu.findByIdAndRemove(_id) // 删除一条
+// 删除parentId含有 _id 的所有数据
+Menu.deleteMany({
+    parentId: {
+        $all: [_id]
+    }
+})
+~~~
+
+
+
+
+
