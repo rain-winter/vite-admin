@@ -45,7 +45,12 @@
               @click="handleEdit(scope.row)"
               >编辑</el-button
             >
-            <el-button text size="small">设置权限</el-button>
+            <el-button
+              @click="handleOpenPermission(scope.row)"
+              text
+              size="small"
+              >设置权限</el-button
+            >
             <el-button
               @click="handleDelete(scope.row._id)"
               type="danger"
@@ -96,6 +101,38 @@
         </span>
       </template>
     </el-dialog>
+
+    <!-- 设置权限弹框 -->
+    <el-dialog title="设置权限" draggable v-model="showPermission">
+      <el-form label-width="auto" ref="permissionForm">
+        <el-form-item label="角色名称">
+          {{ curRoleName }}
+        </el-form-item>
+        <el-form-item label="选择权限">
+          <el-tree
+            :data="menuList"
+            ref="permissionTreeRef"
+            show-checkbox
+            highlight-current
+            node-key="_id"
+            default-expand-all
+            :props="{ label: 'menuName' }"
+            :default-checked-keys="[5]"
+          />
+        </el-form-item>
+      </el-form>
+
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="showPermission = false">Cancel</el-button>
+          <el-button
+            @click="handlePerssionSubmit(permissionTreeRef)"
+            type="primary"
+            >Confirm</el-button
+          >
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -106,11 +143,11 @@ import utils from '../utils/utils'
 const $api = inject('$api')
 
 const roleList = ref([]) // 角色列表
+const menuList = ref([])
 
 const queryForm = ref({
   roleName: '',
 })
-
 let roleForm = reactive({})
 
 let pager = reactive({
@@ -120,8 +157,15 @@ let pager = reactive({
 
 const formRef = ref('') // 表单实例
 const diagForm = ref('') // 弹框表单实例
-const showModal = ref(false)
-const action = ref('create')
+const permissionTreeRef = ref() // 树实例
+const permissionForm = ref()
+const showModal = ref(false) // 新增弹框
+const showPermission = ref(false) // 权限展示
+const curRoleName = ref('') //
+const curRoleId = ref('')
+const action = ref('create') // 添加/删除
+
+let actionMap = reactive({})
 
 const columns = ref([
   {
@@ -135,7 +179,15 @@ const columns = ref([
   },
   {
     label: '权限列表',
-    prop: 'menuType',
+    prop: 'permissionList',
+    formatter: (row, column, val) => {
+      let list = val.halfCheckedKeys || []
+      let names = []
+      list.map((key) => {
+        if (key) names.push(actionMap[key])
+      })
+      return names.join(',')
+    },
   },
   {
     label: '创建时间',
@@ -155,9 +207,72 @@ const rules = reactive({
   ],
 })
 
-/**
- * 获取按钮列表
- */
+// 设置权限 弹框
+const handleOpenPermission = (row) => {
+  curRoleId.value = row._id
+  curRoleName.value = row.roleName
+  showPermission.value = true
+  // 获取当前的权限
+  let { checkedKeys } = row.permissionList
+  // console.log(toRaw(checkedKeys))
+  setTimeout(() => {
+    permissionTreeRef.value.setCheckedKeys(checkedKeys)
+  })
+}
+
+// 设置权限
+const handlePerssionSubmit = async (treeRef) => {
+  //返回当前选中节点的数组
+  let nodes = treeRef.getCheckedNodes()
+  // 返回目前半选中的节点的 key 所组成的数组
+  let halfKeys = treeRef.getHalfCheckedKeys()
+
+  let checkedKeys = [] // 按钮
+  let parentKeys = [] // 菜单
+
+  // 分离按钮和菜单
+  nodes.map((node) => {
+    if (!node.children) {
+      // 没有children，说明是最后一级按钮
+      checkedKeys.push(node._id)
+    } else {
+      parentKeys.push(node._id)
+    }
+  })
+
+  let params = {
+    _id: curRoleId,
+    permissionList: {
+      checkedKeys,
+      halfCheckedKeys: parentKeys.concat(halfKeys),
+    },
+  }
+  await $api.updatePermission(params)
+  showPermission.value = false
+  message.success('设置成功')
+  getRoleList()
+}
+
+const getActionMap = (list) => {
+  let actionMap = reactive({})
+  const deep = (arr) => {
+    while (arr.length) {
+      let item = arr.pop()
+      if (item.children && item.action) {
+        actionMap[item._id] = item.menuName
+      }
+      // 最后一级
+      if (item.children && !item.action) {
+        deep(item.children)
+      }
+    }
+  }
+  deep(list)
+  console.log('actionMap=》', actionMap)
+  Object.assign(actionMap, actionMap)
+}
+
+// 获取角色列表
 const getRoleList = async () => {
   try {
     const { list, page } = await $api.getRoleList(queryForm.value)
@@ -167,6 +282,18 @@ const getRoleList = async () => {
     throw new Error(error)
   }
 }
+
+// 获取按钮列表
+const getMenuList = async () => {
+  try {
+    const list = await $api.getMenuList()
+    menuList.value = list
+    getActionMap(list)
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+getMenuList() // 获取按钮列表
 getRoleList() // 获取按钮列表
 
 // 重置表单

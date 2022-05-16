@@ -80,9 +80,18 @@ export default {
 			data: params,
 		})
 	},
+	// 角色的 添加、修改、删除 
 	roleOperate(params) {
 		return request({
 			url: '/roles/operate',
+			method: 'post',
+			data: params,
+		})
+	},
+	// 更新权限
+	updatePermission(params) {
+		return request({
+			url: '/roles/update/permission',
 			method: 'post',
 			data: params,
 			mock: true
