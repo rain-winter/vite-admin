@@ -1,17 +1,15 @@
 /**
- * aoi 管理
+ * api 管理
  */
 import request from '../utils/request'
-import {
-	ElMessage
-} from 'element-plus'
+import { ElMessage } from 'element-plus'
 
 export default {
 	login(params) {
 		return request({
 			method: 'post',
 			url: '/users/login',
-			data: params
+			data: params,
 		})
 	},
 	// 首页消息
@@ -20,7 +18,7 @@ export default {
 			method: 'get',
 			url: '/leave/count',
 			data: {},
-			mock: true
+			mock: true,
 		})
 	},
 	// 获取菜单列表
@@ -28,7 +26,7 @@ export default {
 		return request({
 			method: 'get',
 			url: '/menu/list',
-			data: params
+			data: params,
 		})
 	},
 	getUserList(params) {
@@ -49,28 +47,28 @@ export default {
 		return request({
 			method: 'get',
 			url: '/roles/allList',
-			mock: true
+			mock: true,
 		})
 	},
 	getRoleList() {
 		return request({
 			method: 'get',
 			url: '/roles/list',
-			mock: true
+			mock: true,
 		})
 	},
 	getDeptList() {
 		return request({
 			url: '/dept/list',
 			method: 'get',
-			mock: true
+			mock: true,
 		})
 	},
 	userSubmit(params) {
 		return request({
 			url: '/users/operate',
 			method: 'post',
-			data: params
+			data: params,
 		})
 	},
 	menuSubmit(params) {
@@ -80,7 +78,7 @@ export default {
 			data: params,
 		})
 	},
-	// 角色的 添加、修改、删除 
+	// 角色的 添加、修改、删除
 	roleOperate(params) {
 		return request({
 			url: '/roles/operate',
@@ -94,7 +92,7 @@ export default {
 			url: '/roles/update/permission',
 			method: 'post',
 			data: params,
-			mock: true
+			mock: true,
 		})
-	}
+	},
 }
