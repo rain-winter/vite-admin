@@ -16,88 +16,36 @@
       <div class="action">
         <el-button @click="handleAdd" type="primary">创建</el-button>
       </div>
-      <el-table
-        style="width: 100% !important"
-        :data="roleList"
-        row-key="_id"
-        stripe
-        border
-      >
-        <el-table-column
-          v-for="(item, index) in columns"
-          :key="item.prop"
-          :prop="item.prop"
-          :label="item.label"
-          :formatter="item.formatter"
-          width="180"
-        />
-        <el-table-column
-          fixed="right"
-          align="center"
-          label="Operations"
-          width="250"
-        >
+      <el-table style="width: 100% !important" :data="roleList" row-key="_id" stripe border>
+        <el-table-column v-for="(item, index) in columns" :key="item.prop" :prop="item.prop" :label="item.label"
+          :formatter="item.formatter" width="180" />
+        <el-table-column fixed="right" align="center" label="Operations" width="250">
           <template #default="scope">
-            <el-button
-              text
-              type="primary"
-              size="small"
-              @click="handleEdit(scope.row)"
-              >编辑</el-button
-            >
-            <el-button
-              @click="handleOpenPermission(scope.row)"
-              text
-              size="small"
-              >设置权限</el-button
-            >
-            <el-button
-              @click="handleDelete(scope.row._id)"
-              type="danger"
-              text
-              size="small"
-              >删除</el-button
-            >
+            <el-button text type="primary" size="small" @click="handleEdit(scope.row)">编辑</el-button>
+            <el-button @click="handleOpenPermission(scope.row)" text size="small">设置权限</el-button>
+            <el-button @click="handleDelete(scope.row._id)" type="danger" text size="small">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination
-        class="pagination mt-4"
-        background
-        layout="->,prev, pager, next"
-        :total="pager.total"
-        @current-change="handleCurrentChange"
-      />
+      <el-pagination class="pagination mt-4" background layout="->,prev, pager, next" :total="pager.total"
+        @current-change="handleCurrentChange" />
     </div>
 
-    <!-- 新增 -->
+    <!-- 新增 弹框 -->
     <el-dialog title="按钮新增" draggable v-model="showModal">
-      <el-form
-        :model="roleForm"
-        label-width="auto"
-        label-position="left"
-        :rules="rules"
-        ref="diagForm"
-      >
+      <el-form :model="roleForm" label-width="auto" label-position="left" :rules="rules" ref="diagForm">
         <el-form-item label="角色名称" prop="roleName">
           <el-input v-model="roleForm.roleName" placeholder="请输入角色名称" />
         </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <el-input
-            type="textarea"
-            :rows="2"
-            v-model="roleForm.remark"
-            placeholder="请输入备注"
-          />
+          <el-input type="textarea" :rows="2" v-model="roleForm.remark" placeholder="请输入备注" />
         </el-form-item>
       </el-form>
 
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="handleClose(diagForm)">Cancel</el-button>
-          <el-button @click="handleSubmit(diagForm)" type="primary"
-            >Confirm</el-button
-          >
+          <el-button @click="handleSubmit(diagForm)" type="primary">Confirm</el-button>
         </span>
       </template>
     </el-dialog>
@@ -109,27 +57,15 @@
           {{ curRoleName }}
         </el-form-item>
         <el-form-item label="选择权限">
-          <el-tree
-            :data="menuList"
-            ref="permissionTreeRef"
-            show-checkbox
-            highlight-current
-            node-key="_id"
-            default-expand-all
-            :props="{ label: 'menuName' }"
-            :default-checked-keys="[5]"
-          />
+          <el-tree :data="menuList" ref="permissionTreeRef" show-checkbox highlight-current node-key="_id"
+            default-expand-all :props="{ label: 'menuName' }"></el-tree>
         </el-form-item>
       </el-form>
 
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="showPermission = false">Cancel</el-button>
-          <el-button
-            @click="handlePerssionSubmit(permissionTreeRef)"
-            type="primary"
-            >Confirm</el-button
-          >
+          <el-button @click="handlePerssionSubmit(permissionTreeRef)" type="primary">Confirm</el-button>
         </span>
       </template>
     </el-dialog>
@@ -180,7 +116,9 @@ const columns = ref([
   {
     label: '权限列表',
     prop: 'permissionList',
+    // 格式化
     formatter: (row, column, val) => {
+      // halfCheckedKeys是按钮
       let list = val.halfCheckedKeys || []
       let names = []
       list.map((key) => {
@@ -214,7 +152,8 @@ const handleOpenPermission = (row) => {
   showPermission.value = true
   // 获取当前的权限
   let { checkedKeys } = row.permissionList
-  // console.log(toRaw(checkedKeys))
+  console.log(toRaw('checkedKeys', checkedKeys))
+
   setTimeout(() => {
     permissionTreeRef.value.setCheckedKeys(checkedKeys)
   })
@@ -226,9 +165,10 @@ const handlePerssionSubmit = async (treeRef) => {
   let nodes = treeRef.getCheckedNodes()
   // 返回目前半选中的节点的 key 所组成的数组
   let halfKeys = treeRef.getHalfCheckedKeys()
+  // console.log('halfKey', halfKeys)
 
   let checkedKeys = [] // 按钮
-  let parentKeys = [] // 菜单
+  let parentKeys = [] // 父节点 - 菜单
 
   // 分离按钮和菜单
   nodes.map((node) => {
@@ -253,8 +193,9 @@ const handlePerssionSubmit = async (treeRef) => {
   getRoleList()
 }
 
+// 递归遍历， 把key转换成字典
 const getActionMap = (list) => {
-  let actionMap = reactive({})
+  let actionMap = {}
   const deep = (arr) => {
     while (arr.length) {
       let item = arr.pop()
@@ -267,7 +208,9 @@ const getActionMap = (list) => {
       }
     }
   }
-  deep(list)
+  // JSON.parse JSON.stringfy是形成一个新的对象
+  // 防止原数据被改变
+  deep(JSON.parse(JSON.stringify(list)))
   console.log('actionMap=》', actionMap)
   Object.assign(actionMap, actionMap)
 }
@@ -275,7 +218,7 @@ const getActionMap = (list) => {
 // 获取角色列表
 const getRoleList = async () => {
   try {
-    const { list, page } = await $api.getRoleList(queryForm.value)
+    const { list, page } = await $api.getRoleList({ ...queryForm.value, ...pager })
     roleList.value = list
     pager.total = page.total
   } catch (error) {
@@ -284,11 +227,14 @@ const getRoleList = async () => {
 }
 
 // 获取按钮列表
-const getMenuList = async () => {
+const getMenuList = () => {
   try {
-    const list = await $api.getMenuList()
-    menuList.value = list
-    getActionMap(list)
+    $api.getMenuList().then(list => {
+      menuList.value = list
+      getActionMap(list)
+
+    })
+    console.log('list', menuList.value)
   } catch (error) {
     throw new Error(error)
   }
@@ -311,7 +257,10 @@ const handleAdd = async () => {
   action.value = 'create'
   showModal.value = true
 }
-
+/**
+ * 编辑
+ * @param() 当前行
+ */
 const handleEdit = async (row) => {
   action.value = 'edit'
   showModal.value = true
@@ -322,18 +271,20 @@ const handleEdit = async (row) => {
 const handleSubmit = (diagForm) => {
   diagForm.validate(async (valid) => {
     if (valid) {
+      // api的参数，roleForm和action
       let params = { ...roleForm, action: action.value }
       let res = await $api.roleOperate(params)
+      console.log(res)
       if (res) {
-        showModal.value = false
-        handleReset(diagForm)
-        getRoleList()
+        showModal.value = false // 关闭弹框
+        handleReset(diagForm) // 重置表单
+        getRoleList() // 获取列表
       }
     }
   })
 }
 
-// 删除
+// 删除角色
 const handleDelete = async (_id) => {
   await $api.roleOperate({ _id, action: 'delete' })
   message.success('删除成功')
@@ -341,7 +292,7 @@ const handleDelete = async (_id) => {
 }
 
 // 分页
-const handleCurrentChange = () => {}
+const handleCurrentChange = () => { }
 </script>
 <style lang="scss" scoped>
 .action {
