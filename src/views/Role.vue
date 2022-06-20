@@ -134,8 +134,16 @@ const columns = ref([
       return utils.formateDate(new Date(val))
     },
   },
+  {
+    label: '更新时间',
+    prop: 'updateTime',
+    formatter(row, column, val) {
+      return utils.formateDate(new Date(val))
+    },
+  },
 ])
 
+// 验证，角色名字是必填的
 const rules = reactive({
   roleName: [
     {
