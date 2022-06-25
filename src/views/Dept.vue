@@ -4,7 +4,7 @@
     <div class="query-form">
       <el-form :inline="true" ref="queryForm" :model="queryForm">
         <el-form-item label="部门名称">
-          <el-input placeholder="请输入部门名称" />
+          <el-input placeholder="请输入部门名称" v-model="deptForm.deptName" />
         </el-form-item>
 
         <el-form-item>
@@ -74,7 +74,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="负责人邮箱" size="small">
+        <el-form-item label="负责人邮箱">
           <el-input placeholder="请输入负责人邮箱" v-model="deptForm.userEmail" disabled />
         </el-form-item>
       </el-form>
@@ -96,7 +96,10 @@ export default {
       queryForm: {
         deptName: '',
       },
-      deptForm: {}, // 弹框的表单
+      // 弹框的表单
+      deptForm: {
+        parentId: [null],
+      },
       deptList: [], // 部门列表
       rules: {
         parentId: [
@@ -155,7 +158,7 @@ export default {
   methods: {
     // 获取部门
     async getDeptList() {
-      let list = await this.$api.getDeptList()
+      let list = await this.$api.getDeptList(this.deptForm)
       this.deptList = list
     },
     // 获取全部用户
@@ -200,12 +203,10 @@ export default {
             action: this.action,
           }
           delete params.user
-          let res = await this.$api.deptOperate(params)
-          if (res) {
-            this.showMadel = false
-            this.$message.success('操作成功')
-            this.getDeptList()
-          }
+          await this.$api.deptOperate(params)
+          this.$message.success('操作成功')
+          this.handleClose()
+          this.getDeptList()
         }
       })
     },

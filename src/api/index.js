@@ -29,6 +29,7 @@ export default {
     })
   },
   getUserList(params) {
+    // 获取用户列表，带分页
     return request({
       method: 'get',
       url: '/users/list',
@@ -40,7 +41,6 @@ export default {
     return request({
       method: 'get',
       url: '/users/all/list',
-      mock: true,
     })
   },
   userDel(params) {
@@ -65,13 +65,15 @@ export default {
       data: params,
     })
   },
-  getDeptList() {
+  // 获取部门列表
+  getDeptList(params) {
     return request({
       url: '/dept/list',
       method: 'get',
-      mock: true,
+      data: params,
     })
   },
+  // 用户的CRUD
   userSubmit(params) {
     return request({
       url: '/users/operate',
@@ -92,7 +94,12 @@ export default {
       url: '/dept/operate',
       method: 'post',
       data: params,
-      mock: true,
+    })
+  },
+  getPermissionList() {
+    return request({
+      url: '/users/getPermissionList',
+      method: 'get',
     })
   },
   // 角色的 添加、修改、删除

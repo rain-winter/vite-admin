@@ -28,7 +28,7 @@
         <el-button @click="handleCreate" type="primary">新增</el-button>
         <el-button @click="handlePatchDel" type="danger">批量删除</el-button>
       </div>
-      <el-table :data="userList"  @selection-change="handleSelectionChange">
+      <el-table :data="userList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" />
         <el-table-column
           v-for="(item, index) in columns"
@@ -40,15 +40,8 @@
         />
         <el-table-column fixed="right" label="Operations" width="140">
           <template #default="scope">
-            <el-button @click="handleEdit(scope.row)" text size="small"
-              >编辑</el-button
-            >
-            <el-button
-              @click="handleDelete(scope.row)"
-              type="danger"
-              size="small"
-              >删除</el-button
-            >
+            <el-button @click="handleEdit(scope.row)" text size="small">编辑</el-button>
+            <el-button @click="handleDelete(scope.row)" type="danger" size="small">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -84,7 +77,7 @@
           :disabled="action == 'edit'"
           placeholder="请输入用户邮箱"
         >
-          <template #append> @qq.com </template>
+          <template #append>@qq.com</template>
         </el-input>
       </el-form-item>
       <el-form-item label="手机号" prop="mobile">
@@ -113,8 +106,7 @@
             :key="role._id"
             :label="role.roleName"
             :value="role._id"
-          >
-          </el-option>
+          ></el-option>
         </el-select>
       </el-form-item>
 
@@ -131,22 +123,14 @@
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="handleClose(diagForm)">Cancel</el-button>
-        <el-button @click="handleSubmit(diagForm)" type="primary"
-          >Confirm</el-button
-        >
+        <el-button @click="handleSubmit(diagForm)" type="primary">Confirm</el-button>
       </span>
     </template>
   </el-dialog>
 </template>
 
 <script>
-import {
-  onMounted,
-  reactive,
-  ref,
-  toRaw,
-  nextTick,
-} from 'vue'
+import { onMounted, reactive, ref, toRaw, nextTick } from 'vue'
 import utils from '../utils/utils'
 import message from '../utils/message'
 import $api from '../api/index'
@@ -287,12 +271,12 @@ export default {
       getUserList()
     }
     // 重置
-    const handleReset = (e) => {
+    const handleReset = e => {
       e.resetFields()
     }
 
     // 用户单个删除
-    const handleDelete = async (row) => {
+    const handleDelete = async row => {
       console.log(row.userId)
       const res = await $api.userDel({ userIds: [row.userId] })
       message.success('删除成功')
@@ -317,10 +301,10 @@ export default {
     }
 
     // 处理全选给checkUserIds赋值
-    const handleSelectionChange = (list) => {
+    const handleSelectionChange = list => {
       // 选择的数据集
       let arr = []
-      list.map((item) => {
+      list.map(item => {
         arr.push(item.userId)
       })
       checkUserIds.value = arr
@@ -344,7 +328,7 @@ export default {
     }
 
     //关闭提交弹框
-    const handleClose = (diagForm) => {
+    const handleClose = diagForm => {
       showModal.value = false
       handleReset(diagForm)
     }
@@ -353,13 +337,14 @@ export default {
      * 新增用户
      * 需要传递 当前表单
      */
-    const handleSubmit = (diagForm) => {
-      diagForm.validate(async (valid) => {
+    const handleSubmit = diagForm => {
+      diagForm.validate(async valid => {
         if (valid) {
           let params = toRaw(userForm)
           params.action = action.value // 添加还是删除
-          params.userEmail += '@imooc.com'
+          params.userEmail += '@qq.com'
           let res = await $api.userSubmit(params)
+          console.log(res)
           if (res) {
             showModal.value = false
             handleReset(diagForm)
@@ -370,7 +355,7 @@ export default {
       })
     }
 
-    const handleEdit = async (row) => {
+    const handleEdit = async row => {
       action.value = 'edit'
       showModal.value = true
       await nextTick()
@@ -378,7 +363,7 @@ export default {
     }
 
     // 分页时间
-    const handleCurrentChange = (currentPage) => {
+    const handleCurrentChange = currentPage => {
       pager.pageNum = currentPage
       getUserList()
     }
@@ -412,4 +397,3 @@ export default {
   },
 }
 </script>
-

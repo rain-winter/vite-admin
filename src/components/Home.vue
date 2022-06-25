@@ -21,9 +21,7 @@
         </el-menu>
       </div>
     </div>
-    <div
-      :class="['content-right', isCollapse ? 'fold-content' : 'unfold-content']"
-    >
+    <div :class="['content-right', isCollapse ? 'fold-content' : 'unfold-content']">
       <div class="nav-top">
         <div class="nav-left">
           <el-icon style="cursor: pointer" @click="expandOrCollapse">
@@ -44,9 +42,7 @@
             <span>{{ userInfo.userName }}</span>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item
-                  >邮箱:{{ userInfo.userEmail }}</el-dropdown-item
-                >
+                <el-dropdown-item>邮箱:{{ userInfo.userEmail }}</el-dropdown-item>
                 <el-dropdown-item command="logout">退出</el-dropdown-item>
               </el-dropdown-menu>
             </template>
@@ -63,16 +59,16 @@
 </template>
 <script setup>
 import { Fold, Bell } from '@element-plus/icons-vue'
-import { reactive, ref } from 'vue'
+import { reactive, ref, inject } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 
-import api from '../api/index'
 import TreeMenu from './TreeMenu.vue'
 import BreadCrumb from './BreadCrumb.vue'
 
 const router = useRouter()
 const store = useStore()
+const $api = inject('$api')
 
 let isCollapse = ref(false)
 let userInfo = reactive({})
@@ -83,7 +79,7 @@ userInfo = store.state.userInfo || '请登录'
 noticeCount = store.state.noticeCount
 
 // 退出系统
-const handleLogout = (key) => {
+const handleLogout = key => {
   if (key === 'logout') {
     store.commit('saveUserInfo', '')
     router.push({ path: '/login' })
@@ -91,13 +87,15 @@ const handleLogout = (key) => {
 }
 // 获取 通知
 const getNoticeCount = async () => {
-  const count = await api.noticeCount()
+  const count = await $api.noticeCount()
+  await $api.getPermissionList()
+ 
   noticeCount = count
 }
 
 // 获取menu列表
 const getMenuList = async () => {
-  api.getMenuList().then((res) => {
+  $api.getMenuList().then(res => {
     userMenu.push(...res)
   })
 }
