@@ -90,7 +90,7 @@ export default {
   // 更新权限
   updatePermission(params) {
     return request({
-      url: '/roles/update/permission',
+      url: '/roles/updatePermission',
       method: 'post',
       data: params,
     })

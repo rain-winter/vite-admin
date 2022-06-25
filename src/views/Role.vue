@@ -116,14 +116,19 @@ const columns = ref([
   {
     label: '权限列表',
     prop: 'permissionList',
+    width: 200,
     // 格式化
     formatter: (row, column, val) => {
       // halfCheckedKeys是按钮
-      let list = val.halfCheckedKeys || []
+      let list = val.halfCheckedKeys
+      console.log(toRaw(list))
       let names = []
       list.map((key) => {
-        if (key) names.push(actionMap[key])
+        let name = actionMap[key]
+        if (key && name) names.push(name)
       })
+      // console.log(names)
+      console.log('actionMap', toRaw(actionMap))
       return names.join(',')
     },
   },
@@ -154,17 +159,16 @@ const rules = reactive({
 })
 
 // 设置权限 弹框
-const handleOpenPermission = (row) => {
+const handleOpenPermission = async (row) => {
   curRoleId.value = row._id
   curRoleName.value = row.roleName
   showPermission.value = true
   // 获取当前的权限
   let { checkedKeys } = row.permissionList
-  console.log(toRaw('checkedKeys', checkedKeys))
-
-  setTimeout(() => {
-    permissionTreeRef.value.setCheckedKeys(checkedKeys)
-  })
+  // setTimeout(() => {
+  await nextTick()
+  permissionTreeRef.value.setCheckedKeys(checkedKeys)
+  // })
 }
 
 // 设置权限
@@ -174,7 +178,6 @@ const handlePerssionSubmit = async (treeRef) => {
   // 返回目前半选中的节点的 key 所组成的数组
   let halfKeys = treeRef.getHalfCheckedKeys()
   // console.log('halfKey', halfKeys)
-
   let checkedKeys = [] // 按钮
   let parentKeys = [] // 父节点 - 菜单
 
@@ -189,7 +192,7 @@ const handlePerssionSubmit = async (treeRef) => {
   })
 
   let params = {
-    _id: curRoleId,
+    _id: curRoleId.value,
     permissionList: {
       checkedKeys,
       halfCheckedKeys: parentKeys.concat(halfKeys),
@@ -203,12 +206,12 @@ const handlePerssionSubmit = async (treeRef) => {
 
 // 递归遍历， 把key转换成字典
 const getActionMap = (list) => {
-  let actionMap = {}
+  let actionMapTmp = {}
   const deep = (arr) => {
     while (arr.length) {
       let item = arr.pop()
       if (item.children && item.action) {
-        actionMap[item._id] = item.menuName
+        actionMapTmp[item._id] = item.menuName
       }
       // 最后一级
       if (item.children && !item.action) {
@@ -219,8 +222,7 @@ const getActionMap = (list) => {
   // JSON.parse JSON.stringfy是形成一个新的对象
   // 防止原数据被改变
   deep(JSON.parse(JSON.stringify(list)))
-  console.log('actionMap=》', actionMap)
-  Object.assign(actionMap, actionMap)
+  Object.assign(actionMap, actionMapTmp) // 将actionMapTMP拷贝到actionMap
 }
 
 // 获取角色列表
@@ -276,6 +278,7 @@ const handleEdit = async (row) => {
   Object.assign(roleForm, row)
 }
 
+// 增删改查的提交
 const handleSubmit = (diagForm) => {
   diagForm.validate(async (valid) => {
     if (valid) {
