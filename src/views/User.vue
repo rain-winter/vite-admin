@@ -413,9 +413,3 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.action {
-  padding: 20px;
-}
-
-</style>

@@ -35,6 +35,13 @@ export default {
       data: params,
     })
   },
+  getAllUserList() { // 获取全部用户
+    return request({
+      method: 'get',
+      url: '/users/all/list',
+      mock: true,
+    })
+  },
   userDel(params) {
     return request({
       method: 'post',

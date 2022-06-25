@@ -302,8 +302,3 @@ const handleDelete = async (_id) => {
 // 分页
 const handleCurrentChange = () => { }
 </script>
-<style lang="scss" scoped>
-.action {
-  padding: 20px;
-}
-</style>

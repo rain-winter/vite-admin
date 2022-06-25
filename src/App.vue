@@ -12,6 +12,14 @@
 
 <style>
 /* 引入全局的样式 */
-@import "./assets/style/reset.css";
-@import './assets/style/index.sass'
+@import './assets/style/reset.css';
+@import './assets/style/index.sass';
+.action {
+  padding: 20px;
+}
+
+.pagination {
+  text-align: right !important;
+  padding: 10px;
+}
 </style>

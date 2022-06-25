@@ -312,13 +312,3 @@ const getMenuList = async () => {
 }
 getMenuList() // 获取按钮列表
 </script>
-<style lang="scss" scoped>
-.action {
-  padding: 20px;
-}
-
-.pagination {
-  text-align: right !important;
-  padding: 10px;
-}
-</style>
