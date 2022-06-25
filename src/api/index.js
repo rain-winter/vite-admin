@@ -35,7 +35,8 @@ export default {
       data: params,
     })
   },
-  getAllUserList() { // 获取全部用户
+  getAllUserList() {
+    // 获取全部用户
     return request({
       method: 'get',
       url: '/users/all/list',
@@ -83,6 +84,15 @@ export default {
       url: '/menu/operate',
       method: 'post',
       data: params,
+    })
+  },
+  // 部门的添加、更新、删除
+  deptOperate(params) {
+    return request({
+      url: '/dept/operate',
+      method: 'post',
+      data: params,
+      mock: true,
     })
   },
   // 角色的 添加、修改、删除
