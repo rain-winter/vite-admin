@@ -19,7 +19,7 @@ import api from './api'
 import storage from './utils/storage'
 
 const app = createApp(App)
-app.provide('$api', api) // 挂载api
+app.provide('$api', api) // vue3推荐的方式 全局挂载api
 
 // 引用ElementuiPlus所有的icon图标
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
@@ -27,6 +27,6 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 }
 
 // app.config.globalProperties.$request = request // 全局挂在request函数
-// app.config.globalProperties.$api = api // 全局挂在request函数
+app.config.globalProperties.$api = api // 全局挂载api
 // app.config.globalProperties.$storage = storage
 app.use(router).use(ElementPlus).use(store).mount('#app')

@@ -12,13 +12,14 @@
         </el-form-item>
       </el-form>
     </div>
+    <!-- 基本表格 -->
     <div class="base-table">
       <div class="action">
         <el-button @click="handleAdd" type="primary">创建</el-button>
       </div>
       <el-table style="width: 100% !important" :data="roleList" row-key="_id" stripe border>
-        <el-table-column v-for="(item, index) in columns" :key="item.prop" :prop="item.prop" :label="item.label"
-          :formatter="item.formatter" width="180" />
+        <el-table-column show-overflow-tooltip v-for="(item, index) in columns" :key="item.prop" :prop="item.prop"
+          :label="item.label" :formatter="item.formatter" width="180" />
         <el-table-column fixed="right" align="center" label="Operations" width="250">
           <template #default="scope">
             <el-button text type="primary" size="small" @click="handleEdit(scope.row)">编辑</el-button>
@@ -69,6 +70,7 @@
         </span>
       </template>
     </el-dialog>
+
   </div>
 </template>
 
@@ -121,14 +123,11 @@ const columns = ref([
     formatter: (row, column, val) => {
       // halfCheckedKeys是按钮
       let list = val.halfCheckedKeys
-      console.log(toRaw(list))
       let names = []
       list.map((key) => {
         let name = actionMap[key]
         if (key && name) names.push(name)
       })
-      // console.log(names)
-      console.log('actionMap', toRaw(actionMap))
       return names.join(',')
     },
   },
@@ -165,10 +164,8 @@ const handleOpenPermission = async (row) => {
   showPermission.value = true
   // 获取当前的权限
   let { checkedKeys } = row.permissionList
-  // setTimeout(() => {
   await nextTick()
   permissionTreeRef.value.setCheckedKeys(checkedKeys)
-  // })
 }
 
 // 设置权限
