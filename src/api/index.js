@@ -100,6 +100,7 @@ export default {
     return request({
       url: '/users/getPermissionList',
       method: 'get',
+      mock: false,
     })
   },
   // 角色的 添加、修改、删除

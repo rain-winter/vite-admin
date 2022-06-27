@@ -88,16 +88,16 @@ const handleLogout = key => {
 // 获取 通知
 const getNoticeCount = async () => {
   const count = await $api.noticeCount()
-  await $api.getPermissionList()
- 
   noticeCount = count
 }
 
 // 获取menu列表
 const getMenuList = async () => {
-  $api.getMenuList().then(res => {
-    userMenu.push(...res)
-  })
+  let res = await $api.getPermissionList()
+  userMenu.push(...res)
+  // $api.getMenuList().then(res => {
+  //   userMenu.push(...res)
+  // })
 }
 
 // 展开和收缩
