@@ -18,15 +18,17 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="handleQuery">查询</el-button>
+          <el-button v-has="'user-query'" type="primary" @click="handleQuery">查询</el-button>
           <el-button @click="handleReset(formRef)">重置</el-button>
         </el-form-item>
       </el-form>
     </div>
     <div class="base-table">
       <div class="action">
-        <el-button @click="handleCreate" type="primary">新增</el-button>
-        <el-button @click="handlePatchDel" type="danger">批量删除</el-button>
+        <el-button v-has="user - create" @click="handleCreate" type="primary">新增</el-button>
+        <el-button v-has="'user-patch-delete'" @click="handlePatchDel" type="danger">
+          批量删除
+        </el-button>
       </div>
       <el-table :data="userList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" />
@@ -40,8 +42,17 @@
         />
         <el-table-column fixed="right" label="Operations" width="140">
           <template #default="scope">
-            <el-button @click="handleEdit(scope.row)" text size="small">编辑</el-button>
-            <el-button @click="handleDelete(scope.row)" type="danger" size="small">删除</el-button>
+            <el-button v-has="'user-edit'" @click="handleEdit(scope.row)" text size="small">
+              编辑
+            </el-button>
+            <el-button
+              v-has="'user-delete'"
+              @click="handleDelete(scope.row)"
+              type="danger"
+              size="small"
+            >
+              删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -255,6 +266,7 @@ export default {
       getDeptList()
       getRoleAllList()
     })
+
     const getUserList = async () => {
       let params = { ...user, ...pager }
       try {

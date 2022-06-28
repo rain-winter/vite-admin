@@ -8,8 +8,11 @@ import mutations from './mutations'
 
 const state = {
   userInfo: '' || storage.getItem('userInfo'),
-  noticeCount: false
+  noticeCount: false,
+  menuList:storage.getItem('menuList') || [],
+  actionList:storage.getItem('actionList')
 }
+
 export default createStore({
   state,
   mutations

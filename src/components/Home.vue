@@ -81,7 +81,8 @@ noticeCount = store.state.noticeCount
 // 退出系统
 const handleLogout = key => {
   if (key === 'logout') {
-    store.commit('saveUserInfo', '')
+    // 清楚manager下的所有缓存
+    store.commit('clearSpace')
     router.push({ path: '/login' })
   }
 }
@@ -93,8 +94,10 @@ const getNoticeCount = async () => {
 
 // 获取menu列表
 const getMenuList = async () => {
-  let res = await $api.getPermissionList()
-  userMenu.push(...res)
+  let { menuList, actionList } = await $api.getPermissionList()
+  userMenu.push(...menuList)
+  store.commit('saveUserMenu', menuList)
+  store.commit('saveUserAction', actionList)
   // $api.getMenuList().then(res => {
   //   userMenu.push(...res)
   // })
