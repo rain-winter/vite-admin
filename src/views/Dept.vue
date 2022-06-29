@@ -8,7 +8,7 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button @click="getDeptList">查询</el-button>
+          <el-button v-has="'dept-query'" @click="getDeptList">查询</el-button>
           <el-button @click="handleReset(queryForm)">重置</el-button>
         </el-form-item>
       </el-form>
@@ -16,15 +16,15 @@
     <!-- 展示 -->
     <div class="base-table">
       <div class="action">
-        <el-button type="primary" @click="handleOpen">创建</el-button>
+        <el-button v-has="'dept-create'" type="primary" @click="handleOpen">创建</el-button>
       </div>
       <el-table :data="deptList" row-key="_id" :tree-props="{ children: 'children' }">
         <!-- 直接将width、formatter挂在上去 -->
         <el-table-column v-for="item in columns" :key="item.prop" v-bind="item"></el-table-column>
         <el-table-column label="操作">
           <template #default="scope">
-            <el-button size="small" type="primary" @click="handleEdit(scope.row)">编辑</el-button>
-            <el-button size="small" type="danger" @click="handleDel(scope.row._id)">删除</el-button>
+            <el-button v-has="'dept-edit'" size="small" type="primary" @click="handleEdit(scope.row)">编辑</el-button>
+            <el-button v-has="'dept-delete'" size="small" type="danger" @click="handleDel(scope.row._id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>

@@ -19,10 +19,15 @@
 <script setup>
 import { reactive, ref } from 'vue'
 import { useStore } from 'vuex'
-import api from '../api/index'
 import { useRouter } from 'vue-router'
+
+import api from '../api/index'
+import storage from '../utils/storage'
+import UTILS from '../utils/utils'
+
 const router = useRouter()
 const store = useStore()
+
 // 当前表单绑定的数据
 const user = reactive({
   userName: '',
@@ -59,13 +64,13 @@ const rules = reactive({
   userPwd: [{ validator: checkUserPwd, trigger: 'blur' }],
 })
 // 处理登录
-const handleLogin = (userForm) => {
+const handleLogin = async (userForm) => {
   if (!userForm) return
   userForm.validate((valid) => {
     if (valid) {
       api.login(user).then(res => {
-        console.log(res)
         store.commit('saveUserInfo', res) // 触发store里的方法，设置本地缓存
+         loadAsyncRoutes()
         router.push({
           name: 'WelCome',
         })
@@ -76,6 +81,20 @@ const handleLogin = (userForm) => {
       return false
     }
   })
+}
+
+const loadAsyncRoutes = async () => {
+  let userInfo = storage.getItem('userInfo') || {}
+  if (userInfo.token) {
+    const { menuList } = await api.getPermissionList()
+    let routes = UTILS.generateRoute(menuList) // 调用这个方法生成路由
+    routes.map(route => {
+      // 需要把url变成变量，同时带上.vue文件
+      let url = `./../views/${route.component}.vue`
+      route.component = () => import(url)
+      router.addRoute('home', route)
+    })
+  }
 }
 </script>
 <style lang="scss">

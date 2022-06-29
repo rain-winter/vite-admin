@@ -25,7 +25,7 @@
     </div>
     <div class="base-table">
       <div class="action">
-        <el-button v-has="user - create" @click="handleCreate" type="primary">新增</el-button>
+        <el-button v-has="'user-create'" @click="handleCreate" type="primary">新增</el-button>
         <el-button v-has="'user-patch-delete'" @click="handlePatchDel" type="danger">
           批量删除
         </el-button>

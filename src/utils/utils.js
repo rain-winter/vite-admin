@@ -2,7 +2,32 @@
  * 工具函数封装
  */
 export default {
-  formateDate (date, rule) {
+  generateRoute(menulist) {
+    // 动态生成路由
+    let routes = []
+    const deepList = list => {
+      while (list.length) {
+        let item = list.pop()
+        if (item.action) {
+          routes.push({
+            name: item.component,
+            path: item.path,
+            meta: {
+              title: item.menuName,
+            },
+            component: item.component,
+          })
+        }
+        if (item.children && !item.action) {
+          deepList(item.children)
+        }
+      }
+    }
+    deepList(menulist)
+    // console.log('routes=>', routes)
+    return routes
+  },
+  formateDate(date, rule) {
     let fmt = rule || 'yyyy-MM-dd hh:mm:ss'
     // 匹配四位年
     if (/(y+)/.test(fmt)) {
@@ -15,7 +40,7 @@ export default {
       'd+': date.getDate(),
       'h+': date.getHours(),
       'm+': date.getMinutes(),
-      's+': date.getSeconds()
+      's+': date.getSeconds(),
     }
 
     for (let k in o) {
@@ -25,6 +50,5 @@ export default {
       }
     }
     return fmt
-
-  }
+  },
 }

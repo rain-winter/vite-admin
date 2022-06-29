@@ -34,24 +34,29 @@
         />
         <el-table-column fixed="right" label="Operations" width="195">
           <template #default="scope">
+          <!-- v-has 是自定义指令 -->
             <el-button
+              v-has="'menu-create'"
               @click="handleAdd(2, scope.row)"
               type="primary"
               size="small"
-              v-if="scope.row.menuType==1"
-              >新增</el-button
+              v-if="scope.row.menuType == 1"
             >
+              新增
+            </el-button>
             <!-- <div v-if=
             "scope.row.menuType==2" style="width:48px">12</div> -->
-            <el-button @click="handleEdit(scope.row)" text size="small"
-              >编辑</el-button
-            >
+            <el-button v-has="'menu-edit'" @click="handleEdit(scope.row)" text size="small">
+              编辑
+            </el-button>
             <el-button
+              v-has="'menu-delete'"
               @click="handleDelete(scope.row._id)"
               type="danger"
               size="small"
-              >删除</el-button
             >
+              删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -74,9 +79,7 @@
           :props="{ checkStrictly: true, value: '_id', label: 'menuName' }"
           clearable
         />
-        <span style="color: #999; margin-left: 10px"
-          >不选，则直接创建一级菜单</span
-        >
+        <span style="color: #999; margin-left: 10px">不选，则直接创建一级菜单</span>
       </el-form-item>
 
       <el-form-item label="菜单类型" prop="menuType">
@@ -86,10 +89,7 @@
         </el-radio-group>
       </el-form-item>
 
-      <el-form-item
-        :label="menuForm.menuType == 1 ? '菜单名称' : '按钮名称'"
-        prop="menuName"
-      >
+      <el-form-item :label="menuForm.menuType == 1 ? '菜单名称' : '按钮名称'" prop="menuName">
         <el-input v-model="menuForm.menuName" placeholder="请输入菜单名称" />
       </el-form-item>
 
@@ -101,26 +101,15 @@
         <el-input v-model="menuForm.path" placeholder="请输入路由地址" />
       </el-form-item>
 
-      <el-form-item
-        label="权限标识"
-        prop="menuCode"
-        v-if="menuForm.menuType == 2"
-      >
+      <el-form-item label="权限标识" prop="menuCode" v-if="menuForm.menuType == 2">
         <el-input v-model="menuForm.menuCode" placeholder="请输入权限标识" />
       </el-form-item>
 
-      <el-form-item
-        label="组件路径"
-        prop="component"
-        v-if="menuForm.menuType == 1"
-      >
+      <el-form-item label="组件路径" prop="component" v-if="menuForm.menuType == 1">
         <el-input v-model="menuForm.component" placeholder="请输入组件路径" />
       </el-form-item>
 
-      <el-form-item
-        :label="menuForm.menuType == 1 ? '菜单状态' : '按钮状态'"
-        prop="menuState"
-      >
+      <el-form-item :label="menuForm.menuType == 1 ? '菜单状态' : '按钮状态'" prop="menuState">
         <el-radio-group v-model="menuForm.menuState">
           <el-radio :label="1">正常</el-radio>
           <el-radio :label="2">停用</el-radio>
@@ -131,9 +120,7 @@
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="handleClose(diagForm)">Cancel</el-button>
-        <el-button @click="handleSubmit(diagForm)" type="primary"
-          >Confirm</el-button
-        >
+        <el-button @click="handleSubmit(diagForm)" type="primary">Confirm</el-button>
       </span>
     </template>
   </el-dialog>
@@ -231,15 +218,15 @@ const columns = ref([
  * 重置表单
  * @param {*} e 表单实例
  */
-const handleReset = (e) => {
+const handleReset = e => {
   e.resetFields()
 }
 /**
  * 按钮 - 表单提交
  * @param {*} diagForm 表单实例，用于重置表单
  */
-const handleSubmit = (diagForm) => {
-  diagForm.validate(async (valid) => {
+const handleSubmit = diagForm => {
+  diagForm.validate(async valid => {
     if (valid) {
       // 结构时，由于action是ref代理的，所以要 action: action.value
       let params = { ...menuForm, action: action.value }
@@ -256,7 +243,7 @@ const handleSubmit = (diagForm) => {
  * 关闭弹框
  * @param {*} e 表单实例
  */
-const handleClose = (e) => {
+const handleClose = e => {
   handleReset(e)
   showModal.value = false
 }
@@ -271,7 +258,7 @@ const handleAdd = async (type, row) => {
   action.value = 'add'
   if (type == 2) {
     await nextTick()
-    menuForm.parentId = [...row.parentId, row._id].filter((item) => item)
+    menuForm.parentId = [...row.parentId, row._id].filter(item => item)
   }
 }
 
@@ -279,7 +266,7 @@ const handleAdd = async (type, row) => {
  * 编辑
  * @param {*} row 当前行数据
  */
-const handleEdit = async (row) => {
+const handleEdit = async row => {
   showModal.value = true
   action.value = 'edit'
   await nextTick() // 在渲染出弹框后再赋值。（赋值快于dom渲染）
@@ -290,7 +277,7 @@ const handleEdit = async (row) => {
  * 删除
  * @param {*} _id
  */
-const handleDelete = async (_id) => {
+const handleDelete = async _id => {
   await $api.menuSubmit({
     _id,
     action: 'delete',

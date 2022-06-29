@@ -1,25 +1,25 @@
-import {
-	defineConfig
-} from 'vite'
+import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 const path = require('path')
+import dynamicImport from 'vite-plugin-dynamic-import'
+// import dynamicImportVars from '@rollup/plugin-dynamic-import-vars'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-	resolve: {
-		alias: {
-			'@': path.resolve(__dirname, './src')
-		}
-	},
-	server: {
-		host: 'localhost',
-		port: 8080,
-		// 代理
-		proxy: {
-			'/api': {
-				target: 'http://localhost:3003'
-			}
-		}
-	},
-	plugins: [vue()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
+  server: {
+    host: 'localhost',
+    port: 8080,
+    // 代理
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3003',
+      },
+    },
+  },
+  plugins: [vue()],
 })
