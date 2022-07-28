@@ -86,6 +86,26 @@ const $api = inject('$api') // 引用全局的$api
 $api.login().then(res=>{})
 ~~~
 
+# 动态路由
+
+router加载一次，但是里面的钩子函数会加载多次
+
+所以需要在login.vue再次调用一下`generateRoute()`方法
+
+# 自定义指令
+
+~~~js
+app.directive('has', {
+    beforeMount: (el, binding) => {
+        setTimeout(_ => {
+            // 自定义指令实现按钮的显示
+            el.parentNode.removeChild(el)
+        }, 0)
+    }
+})
+/// v-has
+~~~
+
 
 
 ## yarn 更新依赖包

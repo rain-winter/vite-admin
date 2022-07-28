@@ -1,8 +1,6 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 const path = require('path')
-import dynamicImport from 'vite-plugin-dynamic-import'
-// import dynamicImportVars from '@rollup/plugin-dynamic-import-vars'
 
 // https://vitejs.dev/config/
 export default defineConfig({

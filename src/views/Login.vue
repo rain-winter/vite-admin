@@ -69,6 +69,7 @@ const handleLogin = async (userForm) => {
   userForm.validate((valid) => {
     if (valid) {
       api.login(user).then(res => {
+        console.log(res)
         store.commit('saveUserInfo', res) // 触发store里的方法，设置本地缓存
          loadAsyncRoutes()
         router.push({
