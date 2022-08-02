@@ -120,4 +120,23 @@ export default {
       data: params,
     })
   },
+  // 休假申请列表
+  getLeaveList(params) {
+    return request({
+      url: '/leave/list',
+      method: 'get',
+      data: params,
+      mock: true,
+    })
+  },
+
+  // 处理休假申请
+  leaveOperate(params) {
+    return request({
+      url: '/leave/operate',
+      method: 'post',
+      data: params,
+      mock: true,
+    })
+  },
 }
